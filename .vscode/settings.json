@@ -1,0 +1,15 @@
+{
+  "cSpell.words": [
+    "Decentragram",
+    "Symfoni",
+    "initalize",
+    "ipfs",
+    "jazzicon"
+  ],
+  "solidity.compileUsingLocalVersion": "/Users/joseph/Freethinker Drive/Dev/Examples/Dapp University/Dapp_Instagram/soljson-v0.8.0+commit.c7dfd78e.js",
+  "solidity-va.debug.parser.showExceptions": true,
+  "tabnine.disabledLanguagesIds": [
+    "solidity"
+  ],
+  "solidity.defaultCompiler": "localFile"
+}
