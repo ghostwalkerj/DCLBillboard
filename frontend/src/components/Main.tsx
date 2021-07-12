@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { DecentragramContext } from "../hardhat/SymfoniContext";
 import { BigNumber, utils } from "ethers";
 import { Jazzicon } from '@ukstv/jazzicon-react';
+import { DCLBillboardsContext } from "../hardhat/SymfoniContext";
 
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client');
@@ -28,7 +28,7 @@ interface IImage {
 };
 
 function Main() {
-  const decentragramCtx = useContext(DecentragramContext);
+  const dclbillboardCtx = useContext(DCLBillboardsContext);
   const [description, setDescription] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const ethTxt = useRef<HTMLDivElement[]>([]);
@@ -39,28 +39,28 @@ function Main() {
 
   useEffect(() => {
     const initalizeCount = async () => {
-      if (decentragramCtx.instance) {
-        const _imageCount = await (await decentragramCtx.instance.imageCount()).toNumber();
+      if (dclbillboardCtx.instance) {
+        const _imageCount = await (await dclbillboardCtx.instance.imageCount()).toNumber();
         setImageCount(_imageCount);
       }
     };
     initalizeCount();
 
-  }, [decentragramCtx.instance]);
+  }, [dclbillboardCtx.instance]);
 
   useEffect(() => {
     const initializeImages = async () => {
-      if (decentragramCtx.instance) {
+      if (dclbillboardCtx.instance) {
         const _images: IImage[] = [];
         for (var i = imageCount; i >= 1; i--) {
-          const image = await decentragramCtx.instance.images(i);
+          const image = await dclbillboardCtx.instance.images(i);
           _images.push(image);
         }
         setImages(_images);
       }
     };
     initializeImages();
-  }, [decentragramCtx.instance, imageCount]);
+  }, [dclbillboardCtx.instance, imageCount]);
 
   const captureFile = (event: React.FormEvent) => {
     event.preventDefault();
@@ -86,9 +86,9 @@ function Main() {
     });
 
     const updateContract = async (hash: string) => {
-      if (decentragramCtx.instance) {
+      if (dclbillboardCtx.instance) {
         console.log("Submitting to the contract", ipfsId, description);
-        const uploadTx = await decentragramCtx.instance.uploadImage(hash, description);
+        const uploadTx = await dclbillboardCtx.instance.uploadImage(hash, description);
         await uploadTx.wait();
         setImageCount(imageCount + 1);
       }
@@ -99,8 +99,8 @@ function Main() {
   };
 
   const tipImageOwner = async (id: BigNumber, tipAmount: string) => {
-    if (decentragramCtx.instance) {
-      await decentragramCtx.instance.tipImageOwner(id, { value: utils.parseEther(tipAmount) });
+    if (dclbillboardCtx.instance) {
+      await dclbillboardCtx.instance.tipImageOwner(id, { value: utils.parseEther(tipAmount) });
 
     }
   };

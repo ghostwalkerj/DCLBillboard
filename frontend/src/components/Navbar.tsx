@@ -20,7 +20,7 @@ function Navbar() {
 
       >
         <img src={photo} width="30" height="30" className="d-inline-block align-top" alt="" />
-        Decentragram
+        DCLBillboards
       </div>
       <ul className="navbar-nav px-3">
         <li className="nav-item text-nowrap d-none d-sm-none d-sm-block ">
