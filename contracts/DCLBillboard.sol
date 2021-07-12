@@ -4,8 +4,8 @@ pragma solidity 0.8.4;
 
 import "hardhat/console.sol";
 
-contract DCLBillboards {
-	string public name = "DCLBillboards";
+contract DCLBillboard {
+	string public name = "DCLBillboard";
 
 	// Banners
 	uint256 public bannerCount = 0;

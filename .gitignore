@@ -24,8 +24,7 @@ yarn-error.log*
 
 /typechain
 
-soljson-v0.7.3+commit.9bfce1f6.js
-soljson-v0.8.0+commit.c7dfd78e.js
+soljson-v0.*
 
 cache/
 frontend/src/hardhat/SymfoniContext.tsx
