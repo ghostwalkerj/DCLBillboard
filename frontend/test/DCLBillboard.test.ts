@@ -3,8 +3,8 @@ import chai, { assert } from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { BigNumber, Overrides, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
-import { DCLBillboards__factory } from "../src/hardhat/typechain";
-import { DCLBillboards } from "../src/hardhat/typechain";
+import { DCLBillboards__factory } from "../src/hardhat/typechain/factories/DCLBillboards__factory";
+import { DCLBillboards } from "../src/hardhat/typechain/DCLBillboards";
 
 chai.use(chaiAsPromised);
 chai.use(solidity);
