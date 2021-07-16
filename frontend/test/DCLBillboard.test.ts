@@ -47,16 +47,22 @@ describe("DCLBillboard", () => {
   });
 
   it('can create a billboard', async () => {
-    const trx = await dclBillboard.;
+    const trx = await dclBillboard.createBillboard('My Billboard', '34,23', 'JZ Place', 100);
     await trx.wait();
     const eventFilter = dclBillboard.filters.BillboardCreated(null);
     const event = await dclBillboard.queryFilter(eventFilter);
     console.log(event);
-    billboardCount = await dclBillboard["billboardCount()"]();
+    billboardCount = await dclBillboard.billboardCount();
     assert.equal(billboardCount.toNumber(), 1);
   });
 
-
-
-
+  it('can create a flight', async () => {
+    const trx = await dclBillboard.createFlight('My Flight', 1, 1, 100, Date.now(), Date.now());
+    await trx.wait();
+    const eventFilter = dclBillboard.filters.FlightCreated(null);
+    const event = await dclBillboard.queryFilter(eventFilter);
+    console.log(event);
+    flightCount = await dclBillboard.flightCount();
+    assert.equal(flightCount.toNumber(), 1);
+  });
 });
