@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BigNumber, utils } from "ethers";
 import { Jazzicon } from '@ukstv/jazzicon-react';
-import { DCLBillboardsContext } from "../hardhat/SymfoniContext";
+import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client');
@@ -28,7 +28,7 @@ interface IImage {
 };
 
 function Main() {
-  const dclbillboardCtx = useContext(DCLBillboardsContext);
+  const dclbillboardCtx = useContext(DCLBillboardContext);
   const [description, setDescription] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const ethTxt = useRef<HTMLDivElement[]>([]);

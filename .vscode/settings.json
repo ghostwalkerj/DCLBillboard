@@ -2,12 +2,13 @@
   "cSpell.words": [
     "Decentragram",
     "Symfoni",
+    "dclbillboard",
     "dclbillboards",
     "initalize",
     "ipfs",
     "jazzicon"
   ],
-  "solidity.compileUsingLocalVersion": "/Users/joseph/Freethinker Drive/Dev/Contract Work/DCLBillboards/soljson-v0.8.4+commit.c7e474f2.js",
+  "solidity.compileUsingLocalVersion": "/Users/joseph/Freethinker Drive/Dev/Contract Work/DCLBillboard/soljson-v0.8.4+commit.c7e474f2.js",
   "solidity-va.debug.parser.showExceptions": true,
   "tabnine.disabledLanguagesIds": [
     "solidity"

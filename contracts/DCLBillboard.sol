@@ -26,8 +26,8 @@ contract DCLBillboard {
 
 	struct Billboard {
 		uint256 id;
-		string postion;
 		string description;
+		string parcel;
 		string realm;
 		uint256 rate;
 		address payable owner;
@@ -40,8 +40,9 @@ contract DCLBillboard {
 
 	struct Flight {
 		uint256 id;
-		string parcel;
 		string description;
+		uint256 bannerId;
+		uint256 billboardId;
 		uint256 rate;
 		uint256 startDate;
 		uint256 endDate;
@@ -49,7 +50,7 @@ contract DCLBillboard {
 
 	event FlightCreated(Flight _flight);
 
-	function uploadBanner(
+	function createBanner(
 		string memory _bannerHash,
 		string memory _description,
 		string memory _clickThru
@@ -69,5 +70,61 @@ contract DCLBillboard {
 		banners[bannerCount] = banner;
 
 		emit BannerCreated(banner);
+	}
+
+	function createBillboard(
+		string memory _description,
+		string memory _parcel,
+		string memory _realm,
+		uint256 _rate
+	) public {
+		require(bytes(_description).length > 0, "Description required");
+		require(bytes(_parcel).length > 0, "Parcel required");
+		require(bytes(_realm).length > 0, "Realm required");
+		require(_rate > 0, "Rate required");
+		require(msg.sender != address(0x0), "Bad Sender");
+		billboardCount++;
+
+		Billboard memory billBoard = Billboard(
+			billboardCount,
+			_description,
+			_parcel,
+			_realm,
+			_rate,
+			payable(msg.sender)
+		);
+		billboards[billboardCount] = billBoard;
+
+		emit BillboardCreated(billBoard);
+	}
+
+	function createFlight(
+		string memory _description,
+		uint256 _bannerId,
+		uint256 _billboardId,
+		uint256 _rate,
+		uint256 _startDate,
+		uint256 _endDate
+	) public {
+		require(bytes(_description).length > 0, "Description required");
+		require(_bannerId > 0, "BannerId required");
+		require(_billboardId > 0, "BillboardId required");
+		require(_rate > 0, "Rate required");
+		require(_startDate > 0, "StartDate required");
+		require(_endDate > 0, "EndDate required");
+		flightCount++;
+
+		Flight memory flight = Flight(
+			flightCount,
+			_description,
+			_bannerId,
+			_billboardId,
+			_rate,
+			_startDate,
+			_endDate
+		);
+		flights[flightCount] = flight;
+
+		emit FlightCreated(flight);
 	}
 }

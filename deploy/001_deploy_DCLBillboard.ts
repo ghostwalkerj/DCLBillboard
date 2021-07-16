@@ -7,11 +7,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer } = await getNamedAccounts();
 
-  await deploy('DCLBillBoards', {
+  await deploy('DCLBillboard', {
     from: deployer,
     args: [],
     log: true,
   });
 };
 export default func;
-func.tags = ['DCLBillBoards'];
+func.tags = ['DCLBillboard'];
