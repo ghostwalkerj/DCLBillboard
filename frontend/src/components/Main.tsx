@@ -6,6 +6,7 @@ import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client');
 const IPFS_API_HOST = process.env.REACT_APP_IPFS_API_HOST;
+const IPFS_API_PORT = process.env.REACT_APP_IPFS_API_PORT;
 const IPFS_HOST = process.env.REACT_APP_IPFS_HOST;
 const IPFS_PORT = process.env.REACT_APP_IPFS_PORT;
 const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_PROJECT_ID;
@@ -14,17 +15,12 @@ const INFURA_PROJECT_SECRET = process.env.REACT_APP_INFURA_PROJECT_SECRET;
 // Infura Auth Header
 const auth = 'Basic ' + Buffer.from(INFURA_PROJECT_ID + ':' + INFURA_PROJECT_SECRET).toString('base64');
 
-interface IImage {
+interface IBanner {
   id: BigNumber;
   hash: string;
   description: string;
-  tipAmount: BigNumber;
-  author: string;
-  0: BigNumber;
-  1: string;
-  2: string;
-  3: BigNumber;
-  4: string;
+  clickThru: string;
+  owner: string;
 };
 
 function Main() {
@@ -32,16 +28,16 @@ function Main() {
   const [description, setDescription] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const ethTxt = useRef<HTMLDivElement[]>([]);
-  const [imageCount, setImageCount] = useState(0);
-  const [images, setImages] = useState<IImage[]>([]);
+  const [bannerCount, setBannerCount] = useState(0);
+  const [banners, setBanners] = useState<IBanner[]>([]);
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
 
 
   useEffect(() => {
     const initalizeCount = async () => {
       if (dclbillboardCtx.instance) {
-        const _imageCount = await (await dclbillboardCtx.instance.imageCount()).toNumber();
-        setImageCount(_imageCount);
+        const _bannerCount = await (await dclbillboardCtx.instance.bannerCount()).toNumber();
+        setBannerCount(_bannerCount);
       }
     };
     initalizeCount();
@@ -51,16 +47,16 @@ function Main() {
   useEffect(() => {
     const initializeImages = async () => {
       if (dclbillboardCtx.instance) {
-        const _images: IImage[] = [];
-        for (var i = imageCount; i >= 1; i--) {
-          const image = await dclbillboardCtx.instance.images(i);
-          _images.push(image);
+        const _banners = [];
+        for (var i = bannerCount; i >= 1; i--) {
+          const banner = await dclbillboardCtx.instance.banners(i);
+          _banners.push(banner);
         }
-        setImages(_images);
+        setBanners(_banners);
       }
     };
     initializeImages();
-  }, [dclbillboardCtx.instance, imageCount]);
+  }, [dclbillboardCtx.instance, bannerCount]);
 
   const captureFile = (event: React.FormEvent) => {
     event.preventDefault();
@@ -72,10 +68,11 @@ function Main() {
     reader.readAsArrayBuffer(file);
   };
 
-  const uploadImage = async (description: string) => {
+  const uploadBanner = async (description: string) => {
     console.log("Submitting file to ipfs...");
+    console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
-      host: IPFS_API_HOST, port: IPFS_PORT, protocol: 'http'
+      host: IPFS_API_HOST, port: IPFS_API_PORT, protocol: 'https'
     });
     // adding file to the IPFS
     console.log(buffer);
@@ -87,10 +84,10 @@ function Main() {
 
     const updateContract = async (hash: string) => {
       if (dclbillboardCtx.instance) {
-        console.log("Submitting to the contract", ipfsId, description);
-        const uploadTx = await dclbillboardCtx.instance.uploadImage(hash, description);
+        console.log("Submitting to the contract: ", ipfsId, description);
+        const uploadTx = await dclbillboardCtx.instance.createBanner(hash, description, "");
         await uploadTx.wait();
-        setImageCount(imageCount + 1);
+        setBannerCount(bannerCount + 1);
       }
 
       setDescription("");
@@ -119,7 +116,7 @@ function Main() {
             <form className="imageForm"
               onSubmit={(event) => {
                 event.preventDefault();
-                uploadImage(description);
+                uploadBanner(description);
               }}
             >
               <input type="file" accept="image/*" onChange={captureFile} ref={fileInput} />
@@ -139,26 +136,26 @@ function Main() {
             <p>&nbsp;</p>
 
             <p>&nbsp;</p>
-            {images.map((image, key) => {
+            {banners.map((banner, key) => {
               return (
                 <div className="card mb-4" key={key} >
                   <div className="card-header">
                     <div className="d-inline-block align-top"
                       style={{ width: '30px', height: '30px' }}>
-                      <Jazzicon address={image.author} className='mr-2' />
+                      <Jazzicon address={banner.owner} className='mr-2' />
                     </div>
-                    <small className="text-muted">{image.author}</small>
+                    <small className="text-muted">{banner.owner}</small>
                   </div>
                   <ul id="imageList" className="list-group list-group-flush">
                     <li className="list-group-item">
-                      <p className="text-center"><img src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${image.hash}`} style={{ maxWidth: '420px' }} /></p>
-                      <p>{image.description}</p>
+                      <p className="text-center"><img src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`} style={{ maxWidth: '420px' }} /></p>
+                      <p>{banner.description}</p>
                     </li>
                     <li key={key} className="list-group-item py-2">
                       <small className="float-left mt-1 text-muted">
-                        TIPS: <div ref={el => (ethTxt.current = [...ethTxt.current, el!])} >{utils.formatEther(image.tipAmount.toString())}</div> ETH
+                        {/* TIPS: <div ref={el => (ethTxt.current = [...ethTxt.current, el!])} >{utils.formatEther(image.tipAmount.toString())}</div> ETH */}
                       </small>
-                      <button
+                      {/* <button
                         className="btn btn-link btn-sm float-right pt-0"
                         onClick={() => {
                           let tipAmount = '0.1';
@@ -169,7 +166,7 @@ function Main() {
                         }}
                       >
                         TIP 0.1 ETH
-                      </button>
+                      </button> */}
                     </li>
 
                   </ul>
