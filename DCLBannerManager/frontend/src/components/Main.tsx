@@ -73,6 +73,9 @@ function Main() {
     console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
       host: IPFS_API_HOST, port: IPFS_API_PORT, protocol: 'https'
+      //, headers: {
+      //  authorization: auth
+      //}
     });
     // adding file to the IPFS
     console.log(buffer);
@@ -112,7 +115,7 @@ function Main() {
         >
           <div className="content mr-auto ml-auto">
             <p>&nbsp;</p>
-            <h2>Share Image</h2>
+            <h2>Upload Your Banner</h2>
             <form className="imageForm"
               onSubmit={(event) => {
                 event.preventDefault();
