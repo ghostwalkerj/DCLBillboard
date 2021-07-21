@@ -1,3 +1,7 @@
 DCLBillboardMaster/bin/*
 DCLBannerManager/frontend/node_modules/*
 .DS_Store
+soljson*
+DCLBannerManager/node_modules/.bin/acorn
+DCLBannerManager/artifacts/*
+DCLBannerManager/frontend/src/hardhat/*

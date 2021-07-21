@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BigNumber, utils } from "ethers";
-import { Jazzicon } from '@ukstv/jazzicon-react';
+import { Jazzicon } from "@ukstv/jazzicon-react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
+import { Collapse, Tabs } from "react-bootstrap";
+import { DateRange, Range } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 
 //Declare IPFS
-const ipfsClient = require('ipfs-http-client');
+const ipfsClient = require("ipfs-http-client");
 const IPFS_API_HOST = process.env.REACT_APP_IPFS_API_HOST;
 const IPFS_API_PORT = process.env.REACT_APP_IPFS_API_PORT;
 const IPFS_HOST = process.env.REACT_APP_IPFS_HOST;
@@ -13,7 +17,11 @@ const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_PROJECT_ID;
 const INFURA_PROJECT_SECRET = process.env.REACT_APP_INFURA_PROJECT_SECRET;
 
 // Infura Auth Header
-const auth = 'Basic ' + Buffer.from(INFURA_PROJECT_ID + ':' + INFURA_PROJECT_SECRET).toString('base64');
+const auth =
+  "Basic " +
+  Buffer.from(INFURA_PROJECT_ID + ":" + INFURA_PROJECT_SECRET).toString(
+    "base64"
+  );
 
 interface IBanner {
   id: BigNumber;
@@ -21,27 +29,34 @@ interface IBanner {
   description: string;
   clickThru: string;
   owner: string;
-};
+}
 
 function Main() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
   const [description, setDescription] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
-  const ethTxt = useRef<HTMLDivElement[]>([]);
   const [bannerCount, setBannerCount] = useState(0);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
-
+  const [open, setOpen] = useState(false);
+  const [dateState, setDateState] = useState<[Range]>([
+    {
+      startDate: new Date(),
+      endDate: undefined,
+      key: "selection",
+    },
+  ]);
 
   useEffect(() => {
     const initalizeCount = async () => {
       if (dclbillboardCtx.instance) {
-        const _bannerCount = await (await dclbillboardCtx.instance.bannerCount()).toNumber();
+        const _bannerCount = await (
+          await dclbillboardCtx.instance.bannerCount()
+        ).toNumber();
         setBannerCount(_bannerCount);
       }
     };
     initalizeCount();
-
   }, [dclbillboardCtx.instance]);
 
   useEffect(() => {
@@ -72,7 +87,9 @@ function Main() {
     console.log("Submitting file to ipfs...");
     console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
-      host: IPFS_API_HOST, port: IPFS_API_PORT, protocol: 'https'
+      host: IPFS_API_HOST,
+      port: IPFS_API_PORT,
+      protocol: "https",
       //, headers: {
       //  authorization: auth
       //}
@@ -88,21 +105,20 @@ function Main() {
     const updateContract = async (hash: string) => {
       if (dclbillboardCtx.instance) {
         console.log("Submitting to the contract: ", ipfsId, description);
-        const uploadTx = await dclbillboardCtx.instance.createBanner(hash, description, "");
+        const uploadTx = await dclbillboardCtx.instance.createBanner(
+          hash,
+          description,
+          ""
+        );
         await uploadTx.wait();
         setBannerCount(bannerCount + 1);
       }
 
       setDescription("");
-      if (fileInput.current) { fileInput.current.value = ""; }
+      if (fileInput.current) {
+        fileInput.current.value = "";
+      }
     };
-  };
-
-  const tipImageOwner = async (id: BigNumber, tipAmount: string) => {
-    if (dclbillboardCtx.instance) {
-      await dclbillboardCtx.instance.tipImageOwner(id, { value: utils.parseEther(tipAmount) });
-
-    }
   };
 
   return (
@@ -113,70 +129,146 @@ function Main() {
           className="col-lg-12 ml-auto mr-auto"
           style={{ maxWidth: "500px" }}
         >
-          <div className="content mr-auto ml-auto">
-            <p>&nbsp;</p>
-            <h2>Upload Your Banner</h2>
-            <form className="imageForm"
-              onSubmit={(event) => {
-                event.preventDefault();
-                uploadBanner(description);
-              }}
-            >
-              <input type="file" accept="image/*" onChange={captureFile} ref={fileInput} />
-              <div className="form-group mr-sm-2">
-                <br></br>
-                <input
-                  id="imageDescription"
-                  type="text"
-                  className="form-control"
-                  placeholder="Image description..."
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)} />
-              </div>
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Upload!</button>
-            </form>
-            <p>&nbsp;</p>
-
-            <p>&nbsp;</p>
-            {banners.map((banner, key) => {
-              return (
-                <div className="card mb-4" key={key} >
-                  <div className="card-header">
-                    <div className="d-inline-block align-top"
-                      style={{ width: '30px', height: '30px' }}>
-                      <Jazzicon address={banner.owner} className='mr-2' />
+          <Tabs defaultActiveKey="banner" className="mb-3">
+            <ul className="nav nav-pills pt-4" role="tablist">
+              <li className="nav-item">
+                <a
+                  className="nav-link active"
+                  data-toggle="pill"
+                  href="#banner"
+                >
+                  Banner Manager
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" data-toggle="pill" href="#billboard">
+                  Billboard Manager
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" data-toggle="pill" href="#admin">
+                  Admin
+                </a>
+              </li>
+            </ul>
+            <div className="tab-content">
+              <div id="banner" className="container tab-pane active">
+                <div className="content mr-auto ml-auto">
+                  <p>&nbsp;</p>
+                  <h2>Upload Your Banner</h2>
+                  <form
+                    className="imageForm"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      uploadBanner(description);
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={captureFile}
+                      ref={fileInput}
+                    />
+                    <div className="form-group mr-sm-2">
+                      <br></br>
+                      <input
+                        id="imageDescription"
+                        type="text"
+                        className="form-control"
+                        placeholder="Image description..."
+                        required
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
                     </div>
-                    <small className="text-muted">{banner.owner}</small>
-                  </div>
-                  <ul id="imageList" className="list-group list-group-flush">
-                    <li className="list-group-item">
-                      <p className="text-center"><img src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`} style={{ maxWidth: '420px' }} /></p>
-                      <p>{banner.description}</p>
-                    </li>
-                    <li key={key} className="list-group-item py-2">
-                      <small className="float-left mt-1 text-muted">
-                        {/* TIPS: <div ref={el => (ethTxt.current = [...ethTxt.current, el!])} >{utils.formatEther(image.tipAmount.toString())}</div> ETH */}
-                      </small>
-                      {/* <button
-                        className="btn btn-link btn-sm float-right pt-0"
-                        onClick={() => {
-                          let tipAmount = '0.1';
-                          tipImageOwner(image.id, tipAmount);
-                          console.log(ethTxt.current[key]);
-                          const totalTip = utils.parseEther(ethTxt.current[key].innerText).add(utils.parseEther(tipAmount));
-                          ethTxt.current[key].innerText = utils.formatEther(totalTip.toString());
-                        }}
-                      >
-                        TIP 0.1 ETH
-                      </button> */}
-                    </li>
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-block btn-lg"
+                    >
+                      Upload!
+                    </button>
+                  </form>
+                  <p>&nbsp;</p>
 
-                  </ul>
+                  <p>&nbsp;</p>
+                  {banners.map((banner, key) => {
+                    // Populate Array here
+
+                    return (
+                      <div className="card mb-4" key={key}>
+                        <div className="card-header">
+                          <div
+                            className="d-inline-block align-top"
+                            style={{ width: "30px", height: "30px" }}
+                          >
+                            <Jazzicon address={banner.owner} className="mr-2" />
+                          </div>
+                          <small className="text-muted">{banner.owner}</small>
+                        </div>
+                        <ul
+                          id="bannerList"
+                          className="list-group list-group-flush"
+                        >
+                          <li className="list-group-item">
+                            <p className="text-center">
+                              <img
+                                src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`}
+                                style={{ maxWidth: "420px" }}
+                              />
+                            </p>
+                            <p>{banner.description}</p>
+                          </li>
+                          <li key={key} className="list-group-item py-2">
+                            <div className="row">
+                              <button
+                                className="btn btn-primary btn-sm float-left pt-0"
+                                onClick={() => setOpen(!open)}
+                                aria-controls="example-collapse-text"
+                                aria-expanded={open}
+                              >
+                                Schedule Banner
+                              </button>
+                            </div>
+                            <Collapse in={open}>
+                              <div
+                                id="example-collapse-text"
+                                className="collapse pt-3"
+                              >
+                                <DateRange
+                                  editableDateInputs={true}
+                                  onChange={(item) => {
+                                    if ("selection" in item)
+                                      setDateState([item.selection]);
+                                  }}
+                                  moveRangeOnFirstSelection={false}
+                                  ranges={dateState}
+                                />
+                                ;
+                              </div>
+                            </Collapse>
+                          </li>
+                        </ul>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+              <div id="billboard" className="container tab-pane fade">
+                <h3>Menu 2</h3>
+                <p>
+                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                  accusantium doloremque laudantium, totam rem aperiam.
+                </p>
+              </div>
+              <div id="admin" className="container tab-pane fade">
+                <h3>Menu 2</h3>
+                <p>
+                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                  accusantium doloremque laudantium, totam rem aperiam.
+                </p>
+              </div>
+            </div>
+          </Tabs>
         </main>
       </div>
     </div>
