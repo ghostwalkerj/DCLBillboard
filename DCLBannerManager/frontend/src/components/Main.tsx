@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { BigNumber, utils } from "ethers";
 import { Jazzicon } from "@ukstv/jazzicon-react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-import { Collapse, Tabs } from "react-bootstrap";
+import { Collapse, Tabs, Tab } from "react-bootstrap";
 import { DateRange, Range } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
@@ -129,149 +129,114 @@ function Main() {
           className="col-lg-12 ml-auto mr-auto"
           style={{ maxWidth: "500px" }}
         >
-          <Tabs defaultActiveKey="banner" className="mb-3">
-            <ul className="nav nav-pills pt-4" role="tablist">
-              <li className="nav-item">
-                <a
-                  className="nav-link active"
-                  data-toggle="pill"
-                  href="#banner"
+          <Tabs defaultActiveKey="banner" className="mb-3 pt-4">
+            <Tab eventKey="banner" title="Banner Manager">
+              <div className="content mr-auto ml-auto">
+                <h2>Upload Your Banner</h2>
+                <form
+                  className="imageForm"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    uploadBanner(description);
+                  }}
                 >
-                  Banner Manager
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" data-toggle="pill" href="#billboard">
-                  Billboard Manager
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" data-toggle="pill" href="#admin">
-                  Admin
-                </a>
-              </li>
-            </ul>
-            <div className="tab-content">
-              <div id="banner" className="container tab-pane active">
-                <div className="content mr-auto ml-auto">
-                  <p>&nbsp;</p>
-                  <h2>Upload Your Banner</h2>
-                  <form
-                    className="imageForm"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      uploadBanner(description);
-                    }}
-                  >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={captureFile}
+                    ref={fileInput}
+                  />
+                  <div className="form-group mr-sm-2">
+                    <br></br>
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={captureFile}
-                      ref={fileInput}
+                      id="imageDescription"
+                      type="text"
+                      className="form-control"
+                      placeholder="Image description..."
+                      required
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                     />
-                    <div className="form-group mr-sm-2">
-                      <br></br>
-                      <input
-                        id="imageDescription"
-                        type="text"
-                        className="form-control"
-                        placeholder="Image description..."
-                        required
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary btn-block btn-lg"
-                    >
-                      Upload!
-                    </button>
-                  </form>
-                  <p>&nbsp;</p>
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-block btn-lg"
+                  >
+                    Upload!
+                  </button>
+                </form>
+                <p>&nbsp;</p>
 
-                  <p>&nbsp;</p>
-                  {banners.map((banner, key) => {
-                    // Populate Array here
+                <p>&nbsp;</p>
+                {banners.map((banner, key) => {
+                  // Populate Array here
 
-                    return (
-                      <div className="card mb-4" key={key}>
-                        <div className="card-header">
-                          <div
-                            className="d-inline-block align-top"
-                            style={{ width: "30px", height: "30px" }}
-                          >
-                            <Jazzicon address={banner.owner} className="mr-2" />
-                          </div>
-                          <small className="text-muted">{banner.owner}</small>
-                        </div>
-                        <ul
-                          id="bannerList"
-                          className="list-group list-group-flush"
+                  return (
+                    <div className="card mb-4" key={key}>
+                      <div className="card-header">
+                        <div
+                          className="d-inline-block align-top"
+                          style={{ width: "30px", height: "30px" }}
                         >
-                          <li className="list-group-item">
-                            <p className="text-center">
-                              <img
-                                src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`}
-                                style={{ maxWidth: "420px" }}
-                              />
-                            </p>
-                            <p>{banner.description}</p>
-                          </li>
-                          <li key={key} className="list-group-item py-2">
-                            <div className="row">
-                              <button
-                                className="btn btn-primary btn-sm float-left pt-0"
-                                onClick={() => setOpen(!open)}
-                                aria-controls="example-collapse-text"
-                                aria-expanded={open}
-                              >
-                                Schedule Banner
-                              </button>
-                            </div>
-                            <Collapse in={open}>
-                              <div
-                                id="example-collapse-text"
-                                className="collapse pt-3"
-                              >
-                                <DateRange
-                                  editableDateInputs={true}
-                                  onChange={(item) => {
-                                    if ("selection" in item)
-                                      setDateState([item.selection]);
-                                  }}
-                                  moveRangeOnFirstSelection={false}
-                                  ranges={dateState}
-                                />
-                                ;
-                              </div>
-                            </Collapse>
-                          </li>
-                        </ul>
+                          <Jazzicon address={banner.owner} className="mr-2" />
+                        </div>
+                        <small className="text-muted">{banner.owner}</small>
                       </div>
-                    );
-                  })}
-                </div>
+                      <ul
+                        id="bannerList"
+                        className="list-group list-group-flush"
+                      >
+                        <li className="list-group-item">
+                          <p className="text-center">
+                            <img
+                              src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`}
+                              style={{ maxWidth: "420px" }}
+                            />
+                          </p>
+                          <p>{banner.description}</p>
+                        </li>
+                        <li key={key} className="list-group-item py-2">
+                          <div className="row">
+                            <button
+                              className="btn btn-primary btn-sm float-left pt-0"
+                              onClick={() => setOpen(!open)}
+                              aria-controls="example-collapse-text"
+                              aria-expanded={open}
+                            >
+                              Schedule Banner
+                            </button>
+                          </div>
+                          <Collapse in={open}>
+                            <div
+                              id="example-collapse-text"
+                              className="collapse pt-3"
+                            >
+                              <DateRange
+                                editableDateInputs={true}
+                                onChange={(item) => {
+                                  if ("selection" in item)
+                                    setDateState([item.selection]);
+                                }}
+                                moveRangeOnFirstSelection={false}
+                                ranges={dateState}
+                              />
+                              ;
+                            </div>
+                          </Collapse>
+                        </li>
+                      </ul>
+                    </div>
+                  );
+                })}
               </div>
-              <div id="billboard" className="container tab-pane fade">
-                <h3>Menu 2</h3>
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                  accusantium doloremque laudantium, totam rem aperiam.
-                </p>
-              </div>
-              <div id="admin" className="container tab-pane fade">
-                <h3>Menu 2</h3>
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                  accusantium doloremque laudantium, totam rem aperiam.
-                </p>
-              </div>
-            </div>
+            </Tab>
+            <Tab eventKey="billboard" title="Billboard Manager"></Tab>
+            <Tab eventKey="admin" title="Admin"></Tab>
           </Tabs>
         </main>
       </div>
     </div>
   );
 }
+
 export default Main;
