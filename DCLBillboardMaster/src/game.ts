@@ -1,6 +1,6 @@
 import { createChannel } from '../node_modules/decentraland-builder-scripts/channel';
 import { createInventory } from '../node_modules/decentraland-builder-scripts/inventory';
-import Script1 from "../c4a799c1-9ef8-4787-914e-4f8c15357881/src/item";
+import Script1 from "./item";
 
 const _scene = new Entity('_scene');
 engine.addEntity(_scene);
