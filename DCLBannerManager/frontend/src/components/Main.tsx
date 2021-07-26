@@ -6,14 +6,6 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 import BannerManager from "./BannerManager";
 import BillboardManager from "./BillboardManager";
 
-interface IBanner {
-  id: BigNumber;
-  hash: string;
-  description: string;
-  clickThru: string;
-  owner: string;
-}
-
 function Main() {
   return (
     <div className="container-fluid mt-5">

@@ -5,7 +5,6 @@ import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { Collapse } from "react-bootstrap";
 import { DateRange, Range } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
-import { useForm, SubmitHandler } from "react-hook-form";
 
 //Declare IPFS
 const ipfsClient = require("ipfs-http-client");
