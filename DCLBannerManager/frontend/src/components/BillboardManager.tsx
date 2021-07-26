@@ -1,67 +1,52 @@
-import React, { useContext, useState } from "react";
-import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-import { useForm } from "react-hook-form";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type Inputs = {
+  bannerDescription: string;
+  bannerParcel: string;
+  bannerRealm: string;
+  bannerRate: number
+};
 
 function BillboardManager() {
-  const dclbillboardCtx = useContext(DCLBillboardContext);
+  //const dclbillboardCtx = useContext(DCLBillboardContext);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
+  } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
-  const [description, setDescription] = useState("");
-  const [parcel, setParcel] = useState("");
-  const [realm, setRealm] = useState("");
-  const [rate, setRate] = useState(0.0);
-
+  
   return (
     <div className="content mr-auto ml-auto">
       <h2>Create a Billboard</h2>
       <form className="bannerForm" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group mr-sm-2">
           <br></br>
-          <input defaultValue="test" {...register("example")} />;
-          <input
-            id="bannerDescription"
-            type="text"
-            className="form-control"
+          <input required
             placeholder="Banner description..."
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("bannerDescription",  { required: true })}
+            className="form-control"
           />
           <br></br>
-          <input
-            id="bannerParcel"
-            type="text"
-            className="form-control"
+          <input required
             placeholder="59, -32"
-            required
-            value={parcel}
-            onChange={(e) => setParcel(e.target.value)}
+            {...register("bannerParcel",  { required: true })}
+            className="form-control"
           />
           <br></br>
-          <input
-            id="bannerRealm"
-            type="text"
-            className="form-control"
+          <input required
             placeholder="Genesis Plaza"
-            required
-            value={realm}
-            onChange={(e) => setRealm(e.target.value)}
+            {...register("bannerRealm",  { required: true })}
+            className="form-control"
           />
           <br></br>
-          <input
-            id="bannerRate"
-            type="text"
-            className="form-control"
+          <input required
             placeholder="Rate in Wei / Week"
-            required
-            value={rate ? rate : ""}
-            onChange={(e) => setRate(parseFloat(e.target.value))}
+            {...register("bannerRate", { required: true })}
+            className="form-control"
           />
         </div>
         <button type="submit" className="btn btn-primary btn-block btn-lg">
