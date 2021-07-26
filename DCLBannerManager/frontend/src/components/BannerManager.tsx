@@ -48,10 +48,15 @@ function BannerManager() {
 
   useEffect(() => {
     const initalizeCount = async () => {
-      if (dclbillboardCtx.instance) {
-        const _bannerCount = await (
-          await dclbillboardCtx.instance.bannerCount()
-        ).toNumber();
+      let _bannerCount = 0;
+      try {
+        if (dclbillboardCtx.instance) {
+          _bannerCount = (
+            await dclbillboardCtx.instance.bannerCount()
+          ).toNumber();
+        }
+      } catch (e) {
+      } finally {
         setBannerCount(_bannerCount);
       }
     };

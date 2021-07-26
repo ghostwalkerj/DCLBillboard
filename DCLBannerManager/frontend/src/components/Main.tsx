@@ -4,6 +4,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import BannerManager from "./BannerManager";
+import BillboardManager from "./BillboardManager";
 
 interface IBanner {
   id: BigNumber;
@@ -26,7 +27,9 @@ function Main() {
             <Tab eventKey="banner" title="Banner Manager">
               <BannerManager />
             </Tab>
-            <Tab eventKey="billboard" title="Billboard Manager"></Tab>
+            <Tab eventKey="billboard" title="Billboard Manager">
+              <BillboardManager />
+            </Tab>
             <Tab eventKey="admin" title="Admin"></Tab>
           </Tabs>
         </main>
