@@ -37,14 +37,10 @@ function BannerManager() {
   const [bannerCount, setBannerCount] = useState(0);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
-  const [open, setOpen] = useState(false);
-  const [dateState, setDateState] = useState<[Range]>([
-    {
-      startDate: new Date(),
-      endDate: undefined,
-      key: "selection",
-    },
-  ]);
+  const [open, setOpen] = React.useState < { [key: number]: boolean}>({});
+
+  const [dateState, setDateState] = useState<{ [key: number]: [Range]; }>({
+   });
 
   useEffect(() => {
     const initalizeCount = async () => {
@@ -66,12 +62,24 @@ function BannerManager() {
   useEffect(() => {
     const initializeImages = async () => {
       if (dclbillboardCtx.instance) {
+        const _dateState : { [key: number]: [Range]} = {}
         const _banners = [];
+        let j = 0;
         for (var i = bannerCount; i >= 1; i--) {
           const banner = await dclbillboardCtx.instance.banners(i);
           _banners.push(banner);
+          const today = new Date();
+          const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+          _dateState[j] = [
+            {
+              startDate: today,
+              endDate: nextWeek,
+              key: "selection",
+            }];
+          j++
         }
         setBanners(_banners);
+        setDateState(_dateState);
       }
     };
     initializeImages();
@@ -115,7 +123,17 @@ function BannerManager() {
           ""
         );
         await uploadTx.wait();
+        const today = new Date();
+        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+         
+        setDateState(prevState => ({ ...prevState, bannerCount:  [
+            {
+              startDate: today,
+              endDate: nextWeek,
+              key: "selection",
+            }] }));
         setBannerCount(bannerCount + 1);
+
       }
 
       setDescription("");
@@ -161,8 +179,6 @@ function BannerManager() {
 
       <p>&nbsp;</p>
       {banners.map((banner, key) => {
-        // Populate Array here
-
         return (
           <div className="card mb-4" key={key}>
             <div className="card-header">
@@ -188,24 +204,29 @@ function BannerManager() {
                 <div className="row">
                   <button
                     className="btn btn-primary btn-sm float-left pt-0"
-                    onClick={() => setOpen(!open)}
-                    aria-controls="example-collapse-text"
-                    aria-expanded={open}
-                  >
+                    onClick={() => {
+                      setOpen(prevState => ({ ...prevState, [key]: !prevState[key] }));
+                    }}>
                     Schedule Banner
                   </button>
                 </div>
-                <Collapse in={open}>
+                <Collapse  in={open[key]} >
                   <div id="example-collapse-text" className="collapse pt-3">
                     <DateRange
                       editableDateInputs={true}
                       onChange={(item) => {
-                        if ("selection" in item) setDateState([item.selection]);
+                        if ("selection" in item)
+                          setDateState(
+                            prevState => ({
+                              ...prevState, [key]:
+                                [item.selection]
+                            }));
                       }}
-                      moveRangeOnFirstSelection={false}
-                      ranges={dateState}
+                      moveRangeOnFirstSelection={true}
+                      ranges={dateState[key]}
+                      minDate={new Date()}
+                      focusedRange={[0,0]}
                     />
-                    ;
                   </div>
                 </Collapse>
               </li>
