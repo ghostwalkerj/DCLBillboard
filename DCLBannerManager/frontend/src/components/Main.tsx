@@ -1,5 +1,4 @@
 import React from "react";
-import { BigNumber } from "ethers";
 import { Tabs, Tab } from "react-bootstrap";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file

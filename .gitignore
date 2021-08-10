@@ -5,3 +5,4 @@ soljson*
 DCLBannerManager/node_modules/.bin/acorn
 DCLBannerManager/artifacts/*
 DCLBannerManager/frontend/src/hardhat/*
+node_modules/*

@@ -22,7 +22,7 @@ const auth =
     "base64"
   );
 
-interface IBanner {
+type IBanner = {
   id: BigNumber;
   hash: string;
   description: string;
