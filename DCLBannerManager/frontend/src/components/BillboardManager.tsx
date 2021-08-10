@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 
@@ -12,6 +13,8 @@ type Inputs = {
 
 function BillboardManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
+  const [billboardCount, setBillboardCount] = useState(0);
+
   
   const {
     register,
@@ -20,6 +23,25 @@ function BillboardManager() {
     formState: { errors },
   } = useForm<Inputs>();
 
+  useEffect(() => {
+    const initalizeCount = async () => {
+      let _billBoardCount = 0;
+      try {
+        if (dclbillboardCtx.instance) {
+          _billBoardCount = (
+            await dclbillboardCtx.instance.bannerCount()
+          ).toNumber();
+        }
+      } catch (e) {
+      } finally {
+        setBillboardCount(_billBoardCount);
+      }
+    };
+    initalizeCount();
+  }, [dclbillboardCtx.instance]);
+
+  //ToDo: Load existing banners
+  //ToDo: Create flight and schedule Banner
   const saveBillboard = async (data : Inputs) => {
     if (dclbillboardCtx.instance) {
         const rate = BigNumber.from(data.billboardRate)

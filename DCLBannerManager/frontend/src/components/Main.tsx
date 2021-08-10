@@ -5,6 +5,7 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import BannerManager from "./BannerManager";
 import BillboardManager from "./BillboardManager";
+import AdminManager from "./AdminManager";
 
 function Main() {
   return (
@@ -22,7 +23,9 @@ function Main() {
             <Tab eventKey="billboard" title="Billboard Manager">
               <BillboardManager />
             </Tab>
-            <Tab eventKey="admin" title="Admin"></Tab>
+            <Tab eventKey="admin" title="Admin">
+              <AdminManager />
+            </Tab>
           </Tabs>
         </main>
       </div>
