@@ -29,7 +29,7 @@ function BillboardManager() {
   const {
     register,
     handleSubmit,
-    watch,
+    reset,
     formState: { errors },
   } = useForm<Inputs>();
 
@@ -39,7 +39,7 @@ function BillboardManager() {
       try {
         if (dclbillboardCtx.instance) {
           _billBoardCount = (
-            await dclbillboardCtx.instance.bannerCount()
+            await dclbillboardCtx.instance.billboardCount()
           ).toNumber();
         }
       } catch (e) {
@@ -50,7 +50,6 @@ function BillboardManager() {
     initalizeCount();
   }, [dclbillboardCtx.instance]);
 
-  //ToDo: Load existing banners
   useEffect(() => {
     const initializeBillboards = async () => {
       if (dclbillboardCtx.instance) {
@@ -77,12 +76,12 @@ function BillboardManager() {
         rate
       );
       await saveTx.wait();
+      setBillboardCount(billboardCount + 1);
+      reset();
     }
   };
 
   const onSubmit: SubmitHandler<Inputs> = saveBillboard;
-
-
 
   return (
     <div className="content mr-auto ml-auto">
@@ -110,7 +109,7 @@ function BillboardManager() {
           <br></br>
           <input required
             type="number"
-            placeholder="Rate in Wei / Week"
+            placeholder={'Rate in Wei / Week'}
             {...register("billboardRate", { required: true })}
             className="form-control"
           />
@@ -137,12 +136,12 @@ function BillboardManager() {
             </div>
             <ul id="billboardList" className="list-group list-group-flush">
               <li className="list-group-item">
-                <p>{billboard.description}</p>
+                {billboard.description}
               </li>
-              <li key={key} className="list-group-item py-2">
-                <div className="row">
-
-                </div>
+              <li className="list-group-item">
+                Parcel: {billboard.parcel}<br />
+                Realm: {billboard.realm}<br />
+                Rate: {billboard.rate.toString()} / Wei per Week
               </li>
             </ul>
           </div>
