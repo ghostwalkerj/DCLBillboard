@@ -35,16 +35,16 @@ function BillboardManager() {
 
   useEffect(() => {
     const initalizeCount = async () => {
-      let _billBoardCount = 0;
+      let _billboardCount = 0;
       try {
         if (dclbillboardCtx.instance) {
-          _billBoardCount = (
+          _billboardCount = (
             await dclbillboardCtx.instance.billboardCount()
           ).toNumber();
         }
       } catch (e) {
       } finally {
-        setBillboardCount(_billBoardCount);
+        setBillboardCount(_billboardCount);
       }
     };
     initalizeCount();
@@ -64,7 +64,6 @@ function BillboardManager() {
     initializeBillboards();
   }, [dclbillboardCtx.instance, billboardCount]);
 
-  //ToDo: Create flight and schedule Banner
   const saveBillboard = async (data: Inputs) => {
     if (dclbillboardCtx.instance) {
       const rate = BigNumber.from(data.billboardRate);

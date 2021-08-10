@@ -4,6 +4,8 @@ import { Jazzicon } from "@ukstv/jazzicon-react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { Collapse } from "react-bootstrap";
 import { DateRange, Range } from "react-date-range";
+import { useForm, SubmitHandler } from "react-hook-form";
+
 import "react-date-range/dist/styles.css"; // main style file
 
 //Declare IPFS
@@ -28,7 +30,12 @@ type IBanner = {
   description: string;
   clickThru: string;
   owner: string;
-}
+};
+
+type Inputs = {
+  imageDescription: string;
+};
+
 
 function BannerManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
@@ -37,10 +44,27 @@ function BannerManager() {
   const [bannerCount, setBannerCount] = useState(0);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
-  const [open, setOpen] = React.useState < { [key: number]: boolean}>({});
-
+  const [open, setOpen] = React.useState<{ [key: number]: boolean; }>({});
   const [dateState, setDateState] = useState<{ [key: number]: [Range]; }>({
-   });
+  });
+
+  type IBillboard = {
+    id: BigNumber;
+    description: string;
+    parcel: string;
+    realm: string;
+    rate: BigNumber;
+    owner: string;
+  };
+
+
+  const billboards: IBillboard[] = [];
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
 
   useEffect(() => {
     const initalizeCount = async () => {
@@ -56,27 +80,51 @@ function BannerManager() {
         setBannerCount(_bannerCount);
       }
     };
+
     initalizeCount();
+  }, [dclbillboardCtx.instance]);
+
+
+  useEffect(() => {
+    const loadBillboards = async () => {
+      let _billboardCount = 0;
+      try {
+        if (dclbillboardCtx.instance) {
+          _billboardCount = (
+            await dclbillboardCtx.instance.billboardCount()
+          ).toNumber();
+        }
+      } catch (e) {
+      } finally {
+        if (dclbillboardCtx.instance) {
+          for (var i = _billboardCount; i >= 1; i--) {
+            const billboard = await dclbillboardCtx.instance.billboards(i);
+            billboards.push(billboard);
+          }
+        }
+      }
+    };
+    loadBillboards();
   }, [dclbillboardCtx.instance]);
 
   useEffect(() => {
     const initializeImages = async () => {
       if (dclbillboardCtx.instance) {
-        const _dateState : { [key: number]: [Range]} = {}
+        const _dateState: { [key: number]: [Range]; } = {};
         const _banners = [];
         let j = 0;
         for (var i = bannerCount; i >= 1; i--) {
           const banner = await dclbillboardCtx.instance.banners(i);
           _banners.push(banner);
           const today = new Date();
-          const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+          const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
           _dateState[j] = [
             {
               startDate: today,
               endDate: nextWeek,
               key: "selection",
             }];
-          j++
+          j++;
         }
         setBanners(_banners);
         setDateState(_dateState);
@@ -95,7 +143,7 @@ function BannerManager() {
     reader.readAsArrayBuffer(file);
   };
 
-  const uploadBanner = async (description: string) => {
+  const uploadBanner = async (data: Inputs) => {
     console.log("Submitting file to ipfs...");
     console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
@@ -116,24 +164,26 @@ function BannerManager() {
 
     const updateContract = async (hash: string) => {
       if (dclbillboardCtx.instance) {
-        console.log("Submitting to the contract: ", ipfsId, description);
+        console.log("Submitting to the contract: ", ipfsId, data.imageDescription);
         const uploadTx = await dclbillboardCtx.instance.createBanner(
           hash,
-          description,
+          data.imageDescription,
           ""
         );
         await uploadTx.wait();
         const today = new Date();
-        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-         
-        setDateState(prevState => ({ ...prevState, bannerCount:  [
+        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+
+        setDateState(prevState => ({
+          ...prevState, bannerCount: [
             {
               startDate: today,
               endDate: nextWeek,
               key: "selection",
-            }] }));
+            }]
+        }));
         setBannerCount(bannerCount + 1);
-
+        reset();
       }
 
       setDescription("");
@@ -143,17 +193,17 @@ function BannerManager() {
     };
   };
 
+  const onSubmit: SubmitHandler<Inputs> = uploadBanner;
+
+
   return (
     <div className="content mr-auto ml-auto">
       <h2>Upload Your Banner</h2>
       <form
         className="imageForm"
-        onSubmit={(event) => {
-          event.preventDefault();
-          uploadBanner(description);
-        }}
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <input
+        <input required
           type="file"
           accept="image/*"
           onChange={captureFile}
@@ -161,14 +211,10 @@ function BannerManager() {
         />
         <div className="form-group mr-sm-2">
           <br></br>
-          <input
-            id="imageDescription"
-            type="text"
+          <input required
+            placeholder="Description"
+            {...register("imageDescription", { required: true })}
             className="form-control"
-            placeholder="Image description..."
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
         <button type="submit" className="btn btn-primary btn-block btn-lg">
@@ -210,7 +256,7 @@ function BannerManager() {
                     Schedule Banner
                   </button>
                 </div>
-                <Collapse  in={open[key]} >
+                <Collapse in={open[key]} >
                   <div id="example-collapse-text" className="collapse pt-3">
                     <DateRange
                       editableDateInputs={true}
@@ -225,7 +271,7 @@ function BannerManager() {
                       moveRangeOnFirstSelection={true}
                       ranges={dateState[key]}
                       minDate={new Date()}
-                      focusedRange={[0,0]}
+                      focusedRange={[0, 0]}
                     />
                   </div>
                 </Collapse>
