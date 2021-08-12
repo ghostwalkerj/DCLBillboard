@@ -42,7 +42,6 @@ function BannerManager() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
   } = useForm<Inputs>();
 
   useEffect(() => {
@@ -76,7 +75,7 @@ function BannerManager() {
       } catch (e) {
       } finally {
         if (dclbillboardCtx.instance) {
-          for (var i = _billboardCount; i >= 1; i--) {
+          for (let i = _billboardCount; i >= 1; i--) {
             const billboard = await dclbillboardCtx.instance.billboards(i);
             _billboards.push(billboard);
           }
@@ -130,7 +129,6 @@ function BannerManager() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     console.log("Submitting file to ipfs...");
-    console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
       host: IPFS_API_HOST,
       port: IPFS_API_PORT,
@@ -140,7 +138,6 @@ function BannerManager() {
       //}
     });
     // adding file to the IPFS
-    console.log(buffer);
     let ipfsId = "";
     ipfs.add(buffer).then((response: any) => {
       ipfsId = response.path;
@@ -200,6 +197,8 @@ function BannerManager() {
             onChange={captureFile}
             ref={fileInput}
           />
+          <br />
+          <br />
 
           <input
             required

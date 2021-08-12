@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { DateRange, RangeWithKey } from "react-date-range";
+import { IBanner, IBillboard } from "../types";
 
 type Inputs = {
   flightDescription: string;
@@ -17,8 +18,12 @@ function FlightManager() {
       new Date().getMonth(),
       new Date().getDate() + 6
     ),
-    key: "selection",
+    key: "selection"
   });
+  const [billboards, setBillboards] = useState<IBillboard[]>([]);
+  const [banners, setBanners] = useState<IBanner[]>([]);
+  const [bannerCount, setBannerCount] = useState(0);
+  const [billboardCount, setBillboardCount] = useState(0);
 
   const { register, handleSubmit, control, reset } = useForm<Inputs>();
 
@@ -38,35 +43,36 @@ function FlightManager() {
       <form className="flightForm" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group mr-sm-2">
           <br />
-          <section>
-            <input
-              required
-              placeholder="Description"
-              {...register("flightDescription", { required: true })}
-              className="form-control"
-            />
-          </section>
-          <section>
-            <Controller
-              control={control}
-              name="dateInput"
-              render={({ field }) => (
-                <DateRange
-                  editableDateInputs={true}
-                  onChange={(item) => {
-                    if ("selection" in item) {
-                      setDateState(item.selection);
-                      field.onChange(item.selection);
-                    }
-                  }}
-                  moveRangeOnFirstSelection={true}
-                  ranges={[dateState]}
-                  minDate={new Date()}
-                  focusedRange={[0, 6]}
-                />
-              )}
-            />
-          </section>
+          <input
+            required
+            placeholder="Description"
+            {...register("flightDescription", { required: true })}
+            className="form-control"
+          />
+          <br />
+
+          <br />
+          <Controller
+            control={control}
+            name="dateInput"
+
+            render={({ field }) => (
+              <DateRange
+                editableDateInputs={true}
+                onChange={(item) => {
+                  if ("selection" in item) {
+                    setDateState(item.selection);
+                    field.onChange(item.selection);
+                  }
+                }}
+                moveRangeOnFirstSelection={true}
+                ranges={[dateState]}
+                minDate={new Date()}
+                focusedRange={[0, 6]}
+              />
+            )}
+          />
+
           <button type="submit" className="btn btn-primary btn-block btn-lg">
             Schedule
           </button>
