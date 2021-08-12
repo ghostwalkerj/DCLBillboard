@@ -5,6 +5,7 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 import BannerManager from "./BannerManager";
 import BillboardManager from "./BillboardManager";
 import AdminManager from "./AdminManager";
+import FlightManager from "./FlightManager";
 
 function Main() {
   return (
@@ -13,7 +14,7 @@ function Main() {
         <main
           role="main"
           className="col-lg-12 ml-auto mr-auto"
-          style={{ maxWidth: "500px" }}
+          style={{ maxWidth: "600px" }}
         >
           <Tabs defaultActiveKey="banner" className="mb-3 pt-4">
             <Tab eventKey="banner" title="Banner Manager">
@@ -21,6 +22,9 @@ function Main() {
             </Tab>
             <Tab eventKey="billboard" title="Billboard Manager">
               <BillboardManager />
+            </Tab>
+            <Tab eventKey="flight" title="Flight Manager">
+              <FlightManager />
             </Tab>
             <Tab eventKey="admin" title="Admin">
               <AdminManager />

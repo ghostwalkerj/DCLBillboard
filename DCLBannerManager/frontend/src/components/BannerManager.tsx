@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { BigNumber } from "ethers";
 import { Jazzicon } from "@ukstv/jazzicon-react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { Collapse } from "react-bootstrap";
 import { DateRange, Range } from "react-date-range";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import "react-date-range/dist/styles.css"; // main style file
+import { IBanner, IBillboard } from "../types";
 
 //Declare IPFS
 const ipfsClient = require("ipfs-http-client");
@@ -24,41 +24,20 @@ const auth =
     "base64"
   );
 
-type IBanner = {
-  id: BigNumber;
-  hash: string;
-  description: string;
-  clickThru: string;
-  owner: string;
-};
-
 type Inputs = {
   imageDescription: string;
 };
 
-
 function BannerManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
-  const [description, setDescription] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const [bannerCount, setBannerCount] = useState(0);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
-  const [open, setOpen] = React.useState<{ [key: number]: boolean; }>({});
-  const [dateState, setDateState] = useState<{ [key: number]: [Range]; }>({
-  });
+  const [open, setOpen] = React.useState<{ [key: number]: boolean }>({});
+  const [dateState, setDateState] = useState<{ [key: number]: [Range] }>({});
+  const [billboards, setBillboards] = useState<IBillboard[]>([]);
 
-  type IBillboard = {
-    id: BigNumber;
-    description: string;
-    parcel: string;
-    realm: string;
-    rate: BigNumber;
-    owner: string;
-  };
-
-
-  const billboards: IBillboard[] = [];
   const {
     register,
     handleSubmit,
@@ -84,10 +63,10 @@ function BannerManager() {
     initalizeCount();
   }, [dclbillboardCtx.instance]);
 
-
   useEffect(() => {
     const loadBillboards = async () => {
       let _billboardCount = 0;
+      let _billboards = [];
       try {
         if (dclbillboardCtx.instance) {
           _billboardCount = (
@@ -99,31 +78,37 @@ function BannerManager() {
         if (dclbillboardCtx.instance) {
           for (var i = _billboardCount; i >= 1; i--) {
             const billboard = await dclbillboardCtx.instance.billboards(i);
-            billboards.push(billboard);
+            _billboards.push(billboard);
           }
+          setBillboards(_billboards);
         }
       }
     };
     loadBillboards();
-  }, [dclbillboardCtx.instance]);
+  }, [dclbillboardCtx.instance, billboards]);
 
   useEffect(() => {
     const initializeImages = async () => {
       if (dclbillboardCtx.instance) {
-        const _dateState: { [key: number]: [Range]; } = {};
+        const _dateState: { [key: number]: [Range] } = {};
         const _banners = [];
         let j = 0;
-        for (var i = bannerCount; i >= 1; i--) {
+        for (let i = bannerCount; i >= 1; i--) {
           const banner = await dclbillboardCtx.instance.banners(i);
           _banners.push(banner);
           const today = new Date();
-          const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+          const nextWeek = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 7
+          );
           _dateState[j] = [
             {
               startDate: today,
               endDate: nextWeek,
               key: "selection",
-            }];
+            },
+          ];
           j++;
         }
         setBanners(_banners);
@@ -143,7 +128,7 @@ function BannerManager() {
     reader.readAsArrayBuffer(file);
   };
 
-  const uploadBanner = async (data: Inputs) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     console.log("Submitting file to ipfs...");
     console.log(IPFS_API_HOST, IPFS_PORT);
     const ipfs = await ipfsClient.create({
@@ -164,7 +149,11 @@ function BannerManager() {
 
     const updateContract = async (hash: string) => {
       if (dclbillboardCtx.instance) {
-        console.log("Submitting to the contract: ", ipfsId, data.imageDescription);
+        console.log(
+          "Submitting to the contract: ",
+          ipfsId,
+          data.imageDescription
+        );
         const uploadTx = await dclbillboardCtx.instance.createBanner(
           hash,
           data.imageDescription,
@@ -172,46 +161,48 @@ function BannerManager() {
         );
         await uploadTx.wait();
         const today = new Date();
-        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+        const nextWeek = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() + 7
+        );
 
-        setDateState(prevState => ({
-          ...prevState, bannerCount: [
+        setDateState((prevState) => ({
+          ...prevState,
+          bannerCount: [
             {
               startDate: today,
               endDate: nextWeek,
               key: "selection",
-            }]
+            },
+          ],
         }));
         setBannerCount(bannerCount + 1);
         reset();
       }
 
-      setDescription("");
       if (fileInput.current) {
         fileInput.current.value = "";
       }
     };
   };
 
-  const onSubmit: SubmitHandler<Inputs> = uploadBanner;
-
-
   return (
     <div className="content mr-auto ml-auto">
       <h2>Upload Your Banner</h2>
-      <form
-        className="imageForm"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <input required
-          type="file"
-          accept="image/*"
-          onChange={captureFile}
-          ref={fileInput}
-        />
+      <form className="imageForm" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group mr-sm-2">
-          <br></br>
-          <input required
+          <br />
+          <input
+            required
+            type="file"
+            accept="image/*"
+            onChange={captureFile}
+            ref={fileInput}
+          />
+
+          <input
+            required
             placeholder="Description"
             {...register("imageDescription", { required: true })}
             className="form-control"
@@ -221,8 +212,6 @@ function BannerManager() {
           Upload!
         </button>
       </form>
-      <p>&nbsp;</p>
-
       <p>&nbsp;</p>
       {banners.map((banner, key) => {
         return (
@@ -242,6 +231,7 @@ function BannerManager() {
                   <img
                     src={`http://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`}
                     style={{ maxWidth: "420px" }}
+                    alt={"Banner"}
                   />
                 </p>
                 <p>{banner.description}</p>
@@ -251,22 +241,25 @@ function BannerManager() {
                   <button
                     className="btn btn-primary btn-sm float-left pt-0"
                     onClick={() => {
-                      setOpen(prevState => ({ ...prevState, [key]: !prevState[key] }));
-                    }}>
+                      setOpen((prevState) => ({
+                        ...prevState,
+                        [key]: !prevState[key],
+                      }));
+                    }}
+                  >
                     Schedule Banner
                   </button>
                 </div>
-                <Collapse in={open[key]} >
+                <Collapse in={open[key]}>
                   <div id="example-collapse-text" className="collapse pt-3">
                     <DateRange
                       editableDateInputs={true}
                       onChange={(item) => {
                         if ("selection" in item)
-                          setDateState(
-                            prevState => ({
-                              ...prevState, [key]:
-                                [item.selection]
-                            }));
+                          setDateState((prevState) => ({
+                            ...prevState,
+                            [key]: [item.selection],
+                          }));
                       }}
                       moveRangeOnFirstSelection={true}
                       ranges={dateState[key]}

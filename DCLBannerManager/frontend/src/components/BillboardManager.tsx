@@ -4,15 +4,7 @@ import React, { useContext, useState } from "react";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-
-type IBillboard = {
-  id: BigNumber;
-  description: string;
-  parcel: string;
-  realm: string;
-  rate: BigNumber;
-  owner: string;
-};
+import { IBillboard } from "../types";
 
 type Inputs = {
   billboardDescription: string;

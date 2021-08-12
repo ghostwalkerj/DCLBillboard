@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "baseUrl": "src/",
+    "target": "es6",
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "esnext",
+      "dom"
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,9 +17,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
