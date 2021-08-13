@@ -1,9 +1,9 @@
-import { Jazzicon } from "@ukstv/jazzicon-react";
 import { BigNumber } from "ethers";
 import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { BillboardContext } from "../context/BillboardContext";
+import BillboardView from "./BillboardView";
 
 type Inputs = {
   billboardDescription: string;
@@ -19,8 +19,7 @@ function BillboardManager() {
     billboardContext.billboardCount!,
     billboardContext.setBillboardCount!,
   ];
-  const [billboards] = [
-    billboardContext.billboards!];
+  const [billboards] = [billboardContext.billboards!];
 
   const {
     register,
@@ -75,7 +74,7 @@ function BillboardManager() {
           <input
             required
             type="number"
-            placeholder={"Rate in Wei / Week"}
+            placeholder={"Rate in Wei / Day"}
             {...register("billboardRate", { required: true })}
             className="form-control"
           />
@@ -88,31 +87,9 @@ function BillboardManager() {
         </button>
       </form>
       <p>&nbsp;</p>
-
-      <p>&nbsp;</p>
-      {billboards.map((billboard, key) => {
+      {billboards.map((billboard, key = billboard.id.toNumber()) => {
         return (
-          <div className="card mb-4" key={key}>
-            <div className="card-header">
-              <div
-                className="d-inline-block align-top"
-                style={{ width: "30px", height: "30px" }}
-              >
-                <Jazzicon address={billboard.owner} className="mr-2" />
-              </div>
-              <small className="text-muted">{billboard.owner}</small>
-            </div>
-            <ul id="billboardList" className="list-group list-group-flush">
-              <li className="list-group-item">{billboard.description}</li>
-              <li className="list-group-item">
-                Parcel: {billboard.parcel}
-                <br />
-                Realm: {billboard.realm}
-                <br />
-                Rate: {billboard.rate.toString()} / Wei per Week
-              </li>
-            </ul>
-          </div>
+          <BillboardView billboard={billboard} key={billboard.id.toNumber()} />
         );
       })}
     </div>
