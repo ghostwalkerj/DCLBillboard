@@ -7,6 +7,7 @@ import BillboardManager from "./BillboardManager";
 import AdminManager from "./AdminManager";
 import FlightManager from "./FlightManager";
 import { BillboardProvider } from "../context/BillboardContext";
+import { BannerProvider } from "../context/BannerContext";
 
 function Main() {
   return (
@@ -18,20 +19,22 @@ function Main() {
           style={{ maxWidth: "600px" }}
         >
           <BillboardProvider>
-            <Tabs defaultActiveKey="banner" className="mb-3 pt-4">
-              <Tab eventKey="banner" title="Banner Manager">
-                <BannerManager />
-              </Tab>
-              <Tab eventKey="billboard" title="Billboard Manager">
-                <BillboardManager />
-              </Tab>
-              <Tab eventKey="flight" title="Flight Manager">
-                <FlightManager />
-              </Tab>
-              <Tab eventKey="admin" title="Admin">
-                <AdminManager />
-              </Tab>
-            </Tabs>
+            <BannerProvider>
+              <Tabs defaultActiveKey="banner" className="mb-3 pt-4">
+                <Tab eventKey="banner" title="Banner Manager">
+                  <BannerManager />
+                </Tab>
+                <Tab eventKey="billboard" title="Billboard Manager">
+                  <BillboardManager />
+                </Tab>
+                <Tab eventKey="flight" title="Flight Manager">
+                  <FlightManager />
+                </Tab>
+                <Tab eventKey="admin" title="Admin">
+                  <AdminManager />
+                </Tab>
+              </Tabs>
+            </BannerProvider>
           </BillboardProvider>
         </main>
       </div>

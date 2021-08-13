@@ -1,9 +1,9 @@
 import { Jazzicon } from "@ukstv/jazzicon-react";
 import { BigNumber } from "ethers";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-import { IBillboard } from "../types";
+import { BillboardContext } from "../context/BillboardContext";
 
 type Inputs = {
   billboardDescription: string;
@@ -14,8 +14,13 @@ type Inputs = {
 
 function BillboardManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
-  const [billboardCount, setBillboardCount] = useState(0);
-  const [billboards, setBillboards] = useState<IBillboard[]>([]);
+  const billboardContext = useContext(BillboardContext);
+  const [billboardCount, setBillboardCount] = [
+    billboardContext.billboardCount!,
+    billboardContext.setBillboardCount!,
+  ];
+  const [billboards] = [
+    billboardContext.billboards!];
 
   const {
     register,
@@ -23,37 +28,6 @@ function BillboardManager() {
     reset,
     formState: { errors },
   } = useForm<Inputs>();
-
-  useEffect(() => {
-    const initalizeCount = async () => {
-      let _billboardCount = 0;
-      try {
-        if (dclbillboardCtx.instance) {
-          _billboardCount = (
-            await dclbillboardCtx.instance.billboardCount()
-          ).toNumber();
-        }
-      } catch (e) {
-      } finally {
-        setBillboardCount(_billboardCount);
-      }
-    };
-    initalizeCount();
-  }, [dclbillboardCtx.instance]);
-
-  useEffect(() => {
-    const initializeBillboards = async () => {
-      if (dclbillboardCtx.instance) {
-        const _billBoards = [];
-        for (let i = billboardCount; i >= 1; i--) {
-          const billboard = await dclbillboardCtx.instance.billboards(i);
-          _billBoards.push(billboard);
-        }
-        setBillboards(_billBoards);
-      }
-    };
-    initializeBillboards();
-  }, [dclbillboardCtx.instance, billboardCount]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     if (dclbillboardCtx.instance) {

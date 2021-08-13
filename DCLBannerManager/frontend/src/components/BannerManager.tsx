@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Jazzicon } from "@ukstv/jazzicon-react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-import { Collapse } from "react-bootstrap";
-import { DateRange, Range } from "react-date-range";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import "react-date-range/dist/styles.css"; // main style file
-import { IBanner, IBillboard } from "../types";
+import { BannerContext } from "context/BannerContext";
 
 //Declare IPFS
 const ipfsClient = require("ipfs-http-client");
@@ -30,92 +28,15 @@ type Inputs = {
 
 function BannerManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
+  const bannerContext = useContext(BannerContext);
   const fileInput = useRef<HTMLInputElement>(null);
-  const [bannerCount, setBannerCount] = useState(0);
-  const [banners, setBanners] = useState<IBanner[]>([]);
+  const [bannerCount, setBannerCount] = [
+    bannerContext.bannerCount!,
+    bannerContext.setBannerCount!,
+  ];
+  const [banners] = [bannerContext.banners!];
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
-  const [open, setOpen] = React.useState<{ [key: number]: boolean }>({});
-  const [dateState, setDateState] = useState<{ [key: number]: [Range] }>({});
-  const [billboards, setBillboards] = useState<IBillboard[]>([]);
-
-  const {
-    register,
-    handleSubmit,
-    reset
-  } = useForm<Inputs>();
-
-  useEffect(() => {
-    const initalizeCount = async () => {
-      let _bannerCount = 0;
-      try {
-        if (dclbillboardCtx.instance) {
-          _bannerCount = (
-            await dclbillboardCtx.instance.bannerCount()
-          ).toNumber();
-        }
-      } catch (e) {
-      } finally {
-        setBannerCount(_bannerCount);
-      }
-    };
-
-    initalizeCount();
-  }, [dclbillboardCtx.instance]);
-
-  useEffect(() => {
-    const loadBillboards = async () => {
-      let _billboardCount = 0;
-      let _billboards = [];
-      try {
-        if (dclbillboardCtx.instance) {
-          _billboardCount = (
-            await dclbillboardCtx.instance.billboardCount()
-          ).toNumber();
-        }
-      } catch (e) {
-      } finally {
-        if (dclbillboardCtx.instance) {
-          for (let i = _billboardCount; i >= 1; i--) {
-            const billboard = await dclbillboardCtx.instance.billboards(i);
-            _billboards.push(billboard);
-          }
-          setBillboards(_billboards);
-        }
-      }
-    };
-    loadBillboards();
-  }, [dclbillboardCtx.instance, billboards]);
-
-  useEffect(() => {
-    const initializeImages = async () => {
-      if (dclbillboardCtx.instance) {
-        const _dateState: { [key: number]: [Range] } = {};
-        const _banners = [];
-        let j = 0;
-        for (let i = bannerCount; i >= 1; i--) {
-          const banner = await dclbillboardCtx.instance.banners(i);
-          _banners.push(banner);
-          const today = new Date();
-          const nextWeek = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() + 7
-          );
-          _dateState[j] = [
-            {
-              startDate: today,
-              endDate: nextWeek,
-              key: "selection"
-            }
-          ];
-          j++;
-        }
-        setBanners(_banners);
-        setDateState(_dateState);
-      }
-    };
-    initializeImages();
-  }, [dclbillboardCtx.instance, bannerCount]);
+  const { register, handleSubmit, reset } = useForm<Inputs>();
 
   const captureFile = (event: React.FormEvent) => {
     event.preventDefault();
@@ -132,7 +53,7 @@ function BannerManager() {
     const ipfs = await ipfsClient.create({
       host: IPFS_API_HOST,
       port: IPFS_API_PORT,
-      protocol: "https"
+      protocol: "https",
       //, headers: {
       //  authorization: auth
       //}
@@ -157,23 +78,6 @@ function BannerManager() {
           ""
         );
         await uploadTx.wait();
-        const today = new Date();
-        const nextWeek = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate() + 7
-        );
-
-        setDateState((prevState) => ({
-          ...prevState,
-          bannerCount: [
-            {
-              startDate: today,
-              endDate: nextWeek,
-              key: "selection"
-            }
-          ]
-        }));
         setBannerCount(bannerCount + 1);
         reset();
       }
@@ -199,7 +103,6 @@ function BannerManager() {
           />
           <br />
           <br />
-
           <input
             required
             placeholder="Description"
@@ -234,39 +137,6 @@ function BannerManager() {
                   />
                 </p>
                 <p>{banner.description}</p>
-              </li>
-              <li key={key} className="list-group-item py-2">
-                <div className="row">
-                  <button
-                    className="btn btn-primary btn-sm float-left pt-0"
-                    onClick={() => {
-                      setOpen((prevState) => ({
-                        ...prevState,
-                        [key]: !prevState[key]
-                      }));
-                    }}
-                  >
-                    Schedule Banner
-                  </button>
-                </div>
-                <Collapse in={open[key]}>
-                  <div id="example-collapse-text" className="collapse pt-3">
-                    <DateRange
-                      editableDateInputs={true}
-                      onChange={(item) => {
-                        if ("selection" in item)
-                          setDateState((prevState) => ({
-                            ...prevState,
-                            [key]: [item.selection]
-                          }));
-                      }}
-                      moveRangeOnFirstSelection={true}
-                      ranges={dateState[key]}
-                      minDate={new Date()}
-                      focusedRange={[0, 0]}
-                    />
-                  </div>
-                </Collapse>
               </li>
             </ul>
           </div>
