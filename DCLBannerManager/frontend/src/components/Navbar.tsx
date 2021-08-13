@@ -1,16 +1,15 @@
-import React, { useContext } from 'react';
-import photo from '../photo.png';
+import React, { useContext } from "react";
+import photo from "../photo.png";
 import { CurrentAddressContext } from "../hardhat/SymfoniContext";
-import { Jazzicon } from '@ukstv/jazzicon-react';
+import { Jazzicon } from "@ukstv/jazzicon-react";
 
 function Navbar() {
   const [address, setAddress] = useContext(CurrentAddressContext);
 
-  window.ethereum.on('accountsChanged', (accounts: any) => {
+  window.ethereum.on("accountsChanged", (accounts: any) => {
     console.log(accounts);
     setAddress(accounts[0]);
   });
-
 
 
   return (
@@ -28,12 +27,12 @@ function Navbar() {
             <small>
               {address}
             </small>
-            <div className="d-inline-block align-top"  >
+            <div className="d-inline-block align-top">
               {address
 
                 ? <div
-                  style={{ width: '30px', height: '30px' }}>
-                  <Jazzicon address={address} className='ml-2' />
+                  style={{ width: "30px", height: "30px" }}>
+                  <Jazzicon address={address} className="ml-2" />
 
                 </div>
                 : <span></span>

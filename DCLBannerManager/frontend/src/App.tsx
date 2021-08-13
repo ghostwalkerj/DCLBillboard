@@ -17,5 +17,6 @@ function App() {
       <Main />
     </Symfoni>
   );
-};
+}
+
 export default App;

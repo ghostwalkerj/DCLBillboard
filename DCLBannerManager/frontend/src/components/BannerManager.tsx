@@ -41,7 +41,7 @@ function BannerManager() {
   const {
     register,
     handleSubmit,
-    reset,
+    reset
   } = useForm<Inputs>();
 
   useEffect(() => {
@@ -105,8 +105,8 @@ function BannerManager() {
             {
               startDate: today,
               endDate: nextWeek,
-              key: "selection",
-            },
+              key: "selection"
+            }
           ];
           j++;
         }
@@ -132,7 +132,7 @@ function BannerManager() {
     const ipfs = await ipfsClient.create({
       host: IPFS_API_HOST,
       port: IPFS_API_PORT,
-      protocol: "https",
+      protocol: "https"
       //, headers: {
       //  authorization: auth
       //}
@@ -170,9 +170,9 @@ function BannerManager() {
             {
               startDate: today,
               endDate: nextWeek,
-              key: "selection",
-            },
-          ],
+              key: "selection"
+            }
+          ]
         }));
         setBannerCount(bannerCount + 1);
         reset();
@@ -242,7 +242,7 @@ function BannerManager() {
                     onClick={() => {
                       setOpen((prevState) => ({
                         ...prevState,
-                        [key]: !prevState[key],
+                        [key]: !prevState[key]
                       }));
                     }}
                   >
@@ -257,7 +257,7 @@ function BannerManager() {
                         if ("selection" in item)
                           setDateState((prevState) => ({
                             ...prevState,
-                            [key]: [item.selection],
+                            [key]: [item.selection]
                           }));
                       }}
                       moveRangeOnFirstSelection={true}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { DateRange, RangeWithKey } from "react-date-range";
@@ -7,6 +7,7 @@ import { IBanner, IBillboard } from "../types";
 type Inputs = {
   flightDescription: string;
   dateInput: any;
+  billboardId: number;
 };
 
 function FlightManager() {
@@ -18,7 +19,7 @@ function FlightManager() {
       new Date().getMonth(),
       new Date().getDate() + 6
     ),
-    key: "selection"
+    key: "selection",
   });
   const [billboards, setBillboards] = useState<IBillboard[]>([]);
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -36,6 +37,36 @@ function FlightManager() {
       reset();
     }
   };
+  useEffect(() => {
+    const initalizeCount = async () => {
+      let _billboardCount = 0;
+      try {
+        if (dclbillboardCtx.instance) {
+          _billboardCount = (
+            await dclbillboardCtx.instance.billboardCount()
+          ).toNumber();
+        }
+      } catch (e) {
+      } finally {
+        setBillboardCount(_billboardCount);
+      }
+    };
+    initalizeCount();
+  }, [dclbillboardCtx.instance]);
+
+  useEffect(() => {
+    const initializeBillboards = async () => {
+      if (dclbillboardCtx.instance) {
+        const _billBoards = [];
+        for (let i = billboardCount; i >= 1; i--) {
+          const billboard = await dclbillboardCtx.instance.billboards(i);
+          _billBoards.push(billboard);
+        }
+        setBillboards(_billBoards);
+      }
+    };
+    initializeBillboards();
+  }, [dclbillboardCtx.instance, billboardCount]);
 
   return (
     <div className="content mr-auto ml-auto">
@@ -50,12 +81,25 @@ function FlightManager() {
             className="form-control"
           />
           <br />
-
+          <br />
+          <select
+            placeholder={"Select a Billboard"}
+            className="form-control"
+            {...register("billboardId")}
+          >
+            {billboards.map((billboard) => (
+              <option
+                value={billboard.id.toNumber()}
+                key={billboard.id.toNumber()}
+              >
+                {billboard.description}
+              </option>
+            ))}
+          </select>
           <br />
           <Controller
             control={control}
             name="dateInput"
-
             render={({ field }) => (
               <DateRange
                 editableDateInputs={true}
@@ -72,7 +116,6 @@ function FlightManager() {
               />
             )}
           />
-
           <button type="submit" className="btn btn-primary btn-block btn-lg">
             Schedule
           </button>
