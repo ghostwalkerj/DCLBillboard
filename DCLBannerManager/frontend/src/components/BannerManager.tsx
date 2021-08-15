@@ -113,7 +113,7 @@ function BannerManager() {
         </button>
       </form>
       <p>&nbsp;</p>
-      {banners.map((banner, key) => {
+      {banners.map((banner) => {
         return <BannerView banner={banner} key={banner.id.toNumber()} />;
       })}
     </div>

@@ -36,7 +36,7 @@ function Navbar() {
                   <Jazzicon address={address} className="ml-2" />
                 </div>
               ) : (
-                <span></span>
+                <span> </span>
               )}
             </div>
           </span>

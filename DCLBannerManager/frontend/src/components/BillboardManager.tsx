@@ -87,7 +87,7 @@ function BillboardManager() {
         </button>
       </form>
       <p>&nbsp;</p>
-      {billboards.map((billboard, key = billboard.id.toNumber()) => {
+      {billboards.map((billboard) => {
         return (
           <BillboardView billboard={billboard} key={billboard.id.toNumber()} />
         );

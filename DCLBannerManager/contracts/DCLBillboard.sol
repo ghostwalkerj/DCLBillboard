@@ -147,9 +147,10 @@ contract DCLBillboard is AccessControl {
         emit FlightCreated(flight);
     }
 
-    function approveFlight(uint256 _id) public onlyRole(ADMIN_ROLE) {
-        flights[_id].approved = true;
+    function approveFlight(uint256 _id, bool _approved) public onlyRole(ADMIN_ROLE) returns (Flight) {
+        flights[_id].approved = _approved;
 
+        return _flights[_id];
         emit FlightApproved(flights[_id]);
     }
 

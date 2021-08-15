@@ -26,4 +26,5 @@ export type IFlight = {
   startDate: BigNumber;
   endDate: BigNumber;
   total: BigNumber;
+  approved: boolean;
 };
