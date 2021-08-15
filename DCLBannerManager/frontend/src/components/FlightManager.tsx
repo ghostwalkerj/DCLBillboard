@@ -123,7 +123,7 @@ function FlightManager() {
           <br />
           <select
             className="form-control"
-            {...register("billboardId")}
+            {...register("billboardId", { required: true })}
             onChange={(e) => onBillboardChange(e)}
             value={selectedBillboard ? selectedBillboard.id.toNumber() : 0}
           >
@@ -140,7 +140,7 @@ function FlightManager() {
           <BillboardView billboard={selectedBillboard} />
           <select
             className="form-control"
-            {...register("bannerId")}
+            {...register("bannerId", { required: true })}
             onChange={(e) => onBannerChange(e)}
             value={selectedBanner ? selectedBanner.id.toNumber() : 0}
           >

@@ -1,6 +1,0 @@
-.env
-node_modules/*
-cache/*
-frontend/node_modules/*
-frontend/src/hardhat/*
-/.idea/
