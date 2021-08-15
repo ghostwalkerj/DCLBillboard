@@ -54,9 +54,17 @@ function FlightManager() {
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     if (dclbillboardCtx.instance) {
       console.log("Submitting to the contract: ", data.flightDescription);
-      // const saveTx = await dclbillboardCtx.instance.createFlight(
-      //  data.flightDescription);
-      // await saveTx.wait();
+
+      const saveTx = await dclbillboardCtx.instance.createFlight(
+        data.flightDescription,
+        selectedBanner!.id,
+        selectedBillboard!.id,
+        flightSummary.rate,
+        dateState.startDate!.getTime(),
+        dateState.endDate!.getTime(),
+        flightSummary.totalCost
+      );
+      await saveTx.wait();
       reset();
     }
   };

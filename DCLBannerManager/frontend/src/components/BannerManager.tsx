@@ -10,15 +10,15 @@ import BannerView from "./BannerView";
 const ipfsClient = require("ipfs-http-client");
 const IPFS_API_HOST = process.env.REACT_APP_IPFS_API_HOST;
 const IPFS_API_PORT = process.env.REACT_APP_IPFS_API_PORT;
-const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_PROJECT_ID;
-const INFURA_PROJECT_SECRET = process.env.REACT_APP_INFURA_PROJECT_SECRET;
 
 // Infura Auth Header
-const auth =
-  "Basic " +
-  Buffer.from(INFURA_PROJECT_ID + ":" + INFURA_PROJECT_SECRET).toString(
-    "base64"
-  );
+//const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_PROJECT_ID;
+//const INFURA_PROJECT_SECRET = process.env.REACT_APP_INFURA_PROJECT_SECRET;
+// const auth =
+//   "Basic " +
+//   Buffer.from(INFURA_PROJECT_ID + ":" + INFURA_PROJECT_SECRET).toString(
+//     "base64"
+//   );
 
 type Inputs = {
   imageDescription: string;

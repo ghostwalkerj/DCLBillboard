@@ -8,7 +8,6 @@ type BillboardProps = {
 
 function BillboardView(props: BillboardProps) {
   const billboard = props.billboard;
-
   if (billboard) {
     return (
       <div className="card mb-4" key={billboard.id.toNumber()}>

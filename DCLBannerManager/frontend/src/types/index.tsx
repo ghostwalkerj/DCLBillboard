@@ -16,3 +16,14 @@ export type IBanner = {
   clickThru: string;
   owner: string;
 };
+
+export type IFlight = {
+  id: BigNumber;
+  description: string;
+  bannerId: BigNumber;
+  billboardId: BigNumber;
+  rate: BigNumber;
+  startDate: BigNumber;
+  endDate: BigNumber;
+  total: BigNumber;
+};

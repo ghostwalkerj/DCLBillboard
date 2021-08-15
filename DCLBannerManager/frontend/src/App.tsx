@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Main from "./components/Main";
 import { Symfoni } from "./hardhat/SymfoniContext";
 import React from "react";
+import { RoleProvider } from "context/RoleContext";
 
 function App() {
   return (
@@ -11,10 +12,13 @@ function App() {
       loadingComponent={
         <div id="loader" className="text-center mt-5">
           <p>Loading...</p>
-        </div>}
+        </div>
+      }
     >
       <Navbar />
-      <Main />
+      <RoleProvider>
+        <Main />
+      </RoleProvider>
     </Symfoni>
   );
 }
