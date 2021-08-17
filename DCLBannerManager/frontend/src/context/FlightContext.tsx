@@ -10,7 +10,6 @@ import React, {
 } from "react";
 import { IFlight } from "../types";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
-import { BigNumber } from "ethers";
 
 type Props = {
   flightCount: number;
@@ -18,14 +17,14 @@ type Props = {
   flights: IFlight[];
   setFlights: Dispatch<SetStateAction<IFlight[]>>;
   approveFlight: (flight: IFlight, approved: boolean) => Promise<void>;
-  saveFlight: (
+  createFlight: (
     _description: string,
-    _bannerId: BigNumber,
-    _billboardId: BigNumber,
-    _rate: BigNumber,
-    _startDate: BigNumber,
-    _endDate: BigNumber,
-    _total: BigNumber
+    _bannerId: number,
+    _billboardId: number,
+    _rate: number,
+    _startDate: number,
+    _endDate: number,
+    _total: number
   ) => Promise<void>;
 };
 
@@ -87,14 +86,14 @@ function FlightProvider(props: { children: JSX.Element }) {
     }
   };
 
-  const saveFlight = async (
+  const createFlight = async (
     _description: string,
-    _bannerId: BigNumber,
-    _billboardId: BigNumber,
-    _rate: BigNumber,
-    _startDate: BigNumber,
-    _endDate: BigNumber,
-    _total: BigNumber
+    _bannerId: number,
+    _billboardId: number,
+    _rate: number,
+    _startDate: number,
+    _endDate: number,
+    _total: number
   ) => {
     if (dclbillboardCtx.instance) {
       try {
@@ -122,7 +121,7 @@ function FlightProvider(props: { children: JSX.Element }) {
         flights,
         setFlights,
         approveFlight,
-        saveFlight,
+        createFlight,
       }}
     >
       {props.children}

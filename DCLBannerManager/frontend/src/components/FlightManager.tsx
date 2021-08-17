@@ -4,12 +4,11 @@ import { DateRange, RangeWithKey } from "react-date-range";
 import { BannerContext } from "../context/BannerContext";
 import { BillboardContext } from "../context/BillboardContext";
 import { IBanner, IBillboard } from "../types";
-import BannerView from "./BannerView";
-import BillboardView from "./BillboardView";
-import { Col, Container, Row } from "react-bootstrap";
 import * as dateMath from "date-arithmetic";
 import { FlightContext } from "../context/FlightContext";
-import { BigNumber } from "ethers";
+import BillboardView from "./BillboardView";
+import BannerView from "./BannerView";
+import { Col, Container, Row } from "react-bootstrap";
 
 type Inputs = {
   flightDescription: string;
@@ -42,8 +41,9 @@ function FlightManager() {
   const [disabledDates, setDisabledDates] = useState<Date[]>([]);
   const billboards = billboardContext.billboards!;
   const banners = bannerContext.banners!;
-  const saveFlight = flightContext.saveFlight;
-  const { register, handleSubmit, control, reset } = useForm<Inputs>();
+  const createFlight = flightContext.createFlight;
+  const { register, handleSubmit, control, reset, setValue } =
+    useForm<Inputs>();
   const [selectedBanner, setSelectedBanner] = useState<IBanner>();
   const [selectedBillboard, setSelectedBillboard] = useState<IBillboard>();
   const [flightSummary, setFlightSummary] = useState<FlightSummary>({
@@ -56,19 +56,19 @@ function FlightManager() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     console.log("Submitting to the contract: ", data.flightDescription);
-
-    if (saveFlight) {
-      await saveFlight(
+    if (createFlight) {
+      await createFlight(
         data.flightDescription,
-        selectedBanner!.id!,
-        selectedBillboard!.id!,
-        BigNumber.from(flightSummary.rate),
-        BigNumber.from(dateState.startDate!.getTime()),
-        BigNumber.from(dateState.endDate!.getTime()),
-        BigNumber.from(flightSummary.totalCost)
+        selectedBanner!.id?.toNumber()!,
+        selectedBillboard!.id!.toNumber()!,
+        flightSummary.rate,
+        dateState.startDate!.getTime(),
+        dateState.endDate!.getTime(),
+        flightSummary.totalCost
       );
+      setValue("flightDescription", "");
+      reset();
     }
-    reset();
   };
 
   useEffect(() => {
@@ -120,14 +120,14 @@ function FlightManager() {
           <br />
           <input
             required
-            placeholder="Description"
+            placeholder="Flight description..."
             {...register("flightDescription", { required: true })}
             className="form-control"
           />
           <br />
           <select
             className="form-control"
-            {...register("billboardId", { required: true })}
+            {...register("billboardId")}
             onChange={(e) => onBillboardChange(e)}
             value={selectedBillboard ? selectedBillboard!.id!.toNumber() : 0}
           >
@@ -143,8 +143,9 @@ function FlightManager() {
           <br />
           <BillboardView billboard={selectedBillboard} />
           <select
+            required
             className="form-control"
-            {...register("bannerId", { required: true })}
+            {...register("bannerId")}
             onChange={(e) => onBannerChange(e)}
             value={selectedBanner ? selectedBanner!.id!.toNumber() : 0}
           >

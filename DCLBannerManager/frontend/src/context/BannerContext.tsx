@@ -1,3 +1,5 @@
+// noinspection JSIgnoredPromiseFromCall
+
 import React, {
   Dispatch,
   SetStateAction,
@@ -13,6 +15,11 @@ type ContextProps = {
   setBannerCount: Dispatch<SetStateAction<number>>;
   banners: IBanner[];
   setBanners: Dispatch<SetStateAction<IBanner[]>>;
+  createBanner: (
+    _bannerHash: string,
+    _description: string,
+    _clickThru: string
+  ) => Promise<void>;
 };
 
 const BannerContext = React.createContext<Partial<ContextProps>>({});
@@ -40,7 +47,7 @@ function BannerProvider(props: { children: JSX.Element }) {
   }, [dclbillboardCtx.instance]);
 
   useEffect(() => {
-    const initializeBillboards = async () => {
+    const initializeBanners = async () => {
       if (dclbillboardCtx.instance) {
         const _banners = [];
         for (let i = bannerCount; i >= 1; i--) {
@@ -50,12 +57,31 @@ function BannerProvider(props: { children: JSX.Element }) {
         setBanners(_banners);
       }
     };
-    initializeBillboards();
+    initializeBanners();
   }, [dclbillboardCtx.instance, bannerCount]);
+
+  const createBanner = async (
+    _bannerHash: string,
+    _description: string,
+    _clickThru: string
+  ) => {
+    if (dclbillboardCtx.instance) {
+      try {
+        const approveTx = await dclbillboardCtx.instance.createBanner(
+          _bannerHash,
+          _description,
+          _clickThru
+        );
+        await approveTx.wait();
+        setBannerCount(bannerCount + 1);
+      } finally {
+      }
+    }
+  };
 
   return (
     <BannerContext.Provider
-      value={{ bannerCount, setBannerCount, banners, setBanners }}
+      value={{ bannerCount, setBannerCount, banners, setBanners, createBanner }}
     >
       {props.children}
     </BannerContext.Provider>

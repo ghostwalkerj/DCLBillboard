@@ -1,3 +1,5 @@
+// noinspection JSIgnoredPromiseFromCall
+
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import {
   CurrentAddressContext,

@@ -1,5 +1,4 @@
 import React, { useContext, useRef, useState } from "react";
-import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import "react-date-range/dist/styles.css"; // main style file
@@ -25,12 +24,12 @@ type Inputs = {
 };
 
 function BannerManager() {
-  const dclbillboardCtx = useContext(DCLBillboardContext);
   const bannerContext = useContext(BannerContext);
   const fileInput = useRef<HTMLInputElement>(null);
-  const [bannerCount, setBannerCount] = [
+  const [bannerCount, setBannerCount, createBanner] = [
     bannerContext.bannerCount!,
     bannerContext.setBannerCount!,
+    bannerContext.createBanner!,
   ];
   const [banners] = [bannerContext.banners!];
   const [buffer, setBuffer] = useState<string | ArrayBuffer | null>();
@@ -64,18 +63,13 @@ function BannerManager() {
     });
 
     const updateContract = async (hash: string) => {
-      if (dclbillboardCtx.instance) {
+      if (bannerContext) {
         console.log(
           "Submitting to the contract: ",
           ipfsId,
           data.imageDescription
         );
-        const uploadTx = await dclbillboardCtx.instance.createBanner(
-          hash,
-          data.imageDescription,
-          ""
-        );
-        await uploadTx.wait();
+        await createBanner(hash, data.imageDescription, "");
         setBannerCount(bannerCount + 1);
         reset();
       }

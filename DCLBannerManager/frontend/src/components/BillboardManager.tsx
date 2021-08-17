@@ -1,7 +1,5 @@
-import { BigNumber } from "ethers";
 import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { BillboardContext } from "../context/BillboardContext";
 import BillboardView from "./BillboardView";
 
@@ -13,12 +11,8 @@ type Inputs = {
 };
 
 function BillboardManager() {
-  const dclbillboardCtx = useContext(DCLBillboardContext);
   const billboardContext = useContext(BillboardContext);
-  const [billboardCount, setBillboardCount] = [
-    billboardContext.billboardCount!,
-    billboardContext.setBillboardCount!,
-  ];
+  const [createBillboard] = [billboardContext.createBillboard!];
   const [billboards] = [billboardContext.billboards!];
 
   const {
@@ -29,17 +23,13 @@ function BillboardManager() {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    if (dclbillboardCtx.instance) {
-      const rate = BigNumber.from(data.billboardRate);
-      console.log("Submitting to the contract: ", data.billboardDescription);
-      const saveTx = await dclbillboardCtx.instance.createBillboard(
+    if (billboardContext) {
+      await createBillboard(
         data.billboardDescription,
         data.billboardParcel,
         data.billboardRealm,
-        rate
+        data.billboardRate
       );
-      await saveTx.wait();
-      setBillboardCount(billboardCount + 1);
       reset();
     }
   };

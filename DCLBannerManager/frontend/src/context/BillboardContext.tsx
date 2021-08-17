@@ -1,3 +1,5 @@
+// noinspection JSIgnoredPromiseFromCall
+
 import React, {
   Dispatch,
   SetStateAction,
@@ -13,6 +15,12 @@ type ContextProps = {
   setBillboardCount: Dispatch<SetStateAction<number>>;
   billboards: IBillboard[];
   setBillboards: Dispatch<SetStateAction<IBillboard[]>>;
+  createBillboard: (
+    _description: string,
+    _parcel: string,
+    _realm: string,
+    _rate: number
+  ) => Promise<void>;
 };
 
 const BillboardContext = React.createContext<Partial<ContextProps>>({});
@@ -53,9 +61,34 @@ function BillboardProvider(props: { children: JSX.Element }) {
     initializeBillboards();
   }, [dclbillboardCtx.instance, billboardCount]);
 
+  const createBillboard = async (
+    _description: string,
+    _parcel: string,
+    _realm: string,
+    _rate: number
+  ) => {
+    if (dclbillboardCtx.instance) {
+      console.log("Submitting to the contract: ", _description);
+      const saveTx = await dclbillboardCtx.instance.createBillboard(
+        _description,
+        _parcel,
+        _realm,
+        _rate
+      );
+      await saveTx.wait();
+      setBillboardCount(billboardCount + 1);
+    }
+  };
+
   return (
     <BillboardContext.Provider
-      value={{ billboardCount, setBillboardCount, billboards, setBillboards }}
+      value={{
+        billboardCount,
+        setBillboardCount,
+        billboards,
+        setBillboards,
+        createBillboard,
+      }}
     >
       {props.children}
     </BillboardContext.Provider>
