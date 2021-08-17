@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { DateRange, RangeWithKey } from "react-date-range";
 import { BannerContext } from "../context/BannerContext";
 import { BillboardContext } from "../context/BillboardContext";
@@ -28,7 +27,6 @@ type FlightSummary = {
 };
 
 function FlightManager() {
-  const dclbillboardCtx = useContext(DCLBillboardContext);
   const bannerContext = useContext(BannerContext);
   const flightContext = useContext(FlightContext);
   const billboardContext = useContext(BillboardContext);
