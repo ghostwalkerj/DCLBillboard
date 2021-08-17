@@ -114,7 +114,7 @@ function BannerManager() {
       </form>
       <p>&nbsp;</p>
       {banners.map((banner) => {
-        return <BannerView banner={banner} key={banner.id.toNumber()} />;
+        return <BannerView banner={banner} key={banner!.id!.toNumber()} />;
       })}
     </div>
   );

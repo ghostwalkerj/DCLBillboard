@@ -13,7 +13,7 @@ function BannerView(props: BannerProps) {
   const banner = props.banner;
   if (banner) {
     return (
-      <div className="card mb-4" key={banner.id.toNumber()}>
+      <div className="card mb-4" key={banner!.id!.toNumber()}>
         <div className="card-header">
           <div
             className="d-inline-block align-top"

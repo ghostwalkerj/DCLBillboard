@@ -89,7 +89,10 @@ function BillboardManager() {
       <p>&nbsp;</p>
       {billboards.map((billboard) => {
         return (
-          <BillboardView billboard={billboard} key={billboard.id.toNumber()} />
+          <BillboardView
+            billboard={billboard}
+            key={billboard!.id!.toNumber()}
+          />
         );
       })}
     </div>

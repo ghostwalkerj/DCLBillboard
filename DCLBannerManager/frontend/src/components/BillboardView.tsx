@@ -10,7 +10,7 @@ function BillboardView(props: BillboardProps) {
   const billboard = props.billboard;
   if (billboard) {
     return (
-      <div className="card mb-4" key={billboard.id.toNumber()}>
+      <div className="card mb-4" key={billboard!.id!.toNumber()}>
         <div className="card-header">
           <div
             className="d-inline-block align-top"

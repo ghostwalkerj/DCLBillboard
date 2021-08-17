@@ -1,11 +1,4 @@
-import React, {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { IBanner, IBillboard, IFlight } from "../types";
 import BillboardView from "./BillboardView";
 import BannerView from "./BannerView";
@@ -15,13 +8,16 @@ import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 
 type FlightProps = {
   flight: IFlight | undefined;
-  setSelectedFlight: Dispatch<SetStateAction<IFlight | undefined>>;
   banners: IBanner[] | undefined;
   billboards: IBillboard[] | undefined;
+  approveFlight: (
+    flight: IFlight,
+    approved: boolean
+  ) => Promise<void> | undefined;
 };
 
-function FlightView(props: FlightProps) {
-  const { flight, setSelectedFlight, banners, billboards } = props;
+function FlightApprove(props: FlightProps) {
+  const { flight, approveFlight, banners, billboards } = props;
   const [approved, setApproved] = useState(
     flight !== undefined ? flight.approved : false
   );
@@ -33,36 +29,26 @@ function FlightView(props: FlightProps) {
 
   function getBanner(id: BigNumber) {
     const _banner = banners!.find((obj) => {
-      return obj.id.eq(id);
+      return obj!.id!.eq(id);
     });
     return _banner!;
   }
 
   function getBillboard(id: BigNumber) {
     const _billboard = billboards!.find((obj) => {
-      return obj.id.eq(id);
+      return obj!.id!.eq(id);
     });
     return _billboard!;
   }
 
   const handleChangeChk = async (e: ChangeEvent<HTMLInputElement>) => {
     const _checked = e.target.checked;
-    if (dclbillboardCtx.instance && flight) {
+    if (dclbillboardCtx.instance && flight && approveFlight) {
       try {
-        const approveTx = await dclbillboardCtx.instance.approveFlight(
-          flight.id,
-          _checked
-        );
-        const receipt = await approveTx.wait();
-        if (receipt.status === 1) {
-          setApproved(_checked);
-        } else {
-          setApproved(flight.approved);
-        }
+        await approveFlight(flight, _checked);
+        setApproved(_checked);
       } catch {
-        setApproved(flight.approved);
-      } finally {
-        setSelectedFlight(flight);
+        setApproved(!_checked);
       }
     } else {
       setApproved(!_checked);
@@ -107,22 +93,16 @@ function FlightView(props: FlightProps) {
             <br />
             <BannerView banner={getBanner(flight!.bannerId)} />
           </li>
-          <li>
-            <div className="card mb-4" key={flight.id.toNumber()}>
-              <div className="card-header">
-                Schedule:
-                <br />
-                <br />
-              </div>
-              <ul id="billboardList" className="list-group list-group-flush">
-                <li className="list-group-item small">
-                  Rate: {flight.rate.toNumber()} Wei / Day <br />
-                  Start Date:{startDate.toString()} <br />
-                  End Date: {endDate.toString()} <br />
-                  Run Time: {numberOfDays} days Total Cost:{" "}
-                  {flight.total.toNumber()}
-                </li>
-              </ul>
+          <li className="list-group-item">
+            Schedule:
+            <br />
+            <br />
+            <div className="card-body list-group-item small">
+              Rate: {flight.rate.toNumber()} Wei / Day <br />
+              Start Date:{startDate.toString()} <br />
+              End Date: {endDate.toString()} <br />
+              Run Time: {numberOfDays} days Total Cost:{" "}
+              {flight.total.toNumber()}
             </div>
           </li>
         </ul>
@@ -132,4 +112,4 @@ function FlightView(props: FlightProps) {
   return <div />;
 }
 
-export default FlightView;
+export default FlightApprove;

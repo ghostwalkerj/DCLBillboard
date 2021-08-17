@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 
 export type IBillboard = {
-  id: BigNumber;
+  id?: BigNumber;
   description: string;
   parcel: string;
   realm: string;
@@ -10,7 +10,7 @@ export type IBillboard = {
 };
 
 export type IBanner = {
-  id: BigNumber;
+  id?: BigNumber;
   hash: string;
   description: string;
   clickThru: string;
@@ -18,7 +18,7 @@ export type IBanner = {
 };
 
 export type IFlight = {
-  id: BigNumber;
+  id?: BigNumber;
   description: string;
   bannerId: BigNumber;
   billboardId: BigNumber;
@@ -26,5 +26,5 @@ export type IFlight = {
   startDate: BigNumber;
   endDate: BigNumber;
   total: BigNumber;
-  approved: boolean;
+  approved?: boolean;
 };

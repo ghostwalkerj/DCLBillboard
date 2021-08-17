@@ -9,6 +9,8 @@ import BannerView from "./BannerView";
 import BillboardView from "./BillboardView";
 import { Col, Container, Row } from "react-bootstrap";
 import * as dateMath from "date-arithmetic";
+import { FlightContext } from "../context/FlightContext";
+import { BigNumber } from "ethers";
 
 type Inputs = {
   flightDescription: string;
@@ -28,6 +30,7 @@ type FlightSummary = {
 function FlightManager() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
   const bannerContext = useContext(BannerContext);
+  const flightContext = useContext(FlightContext);
   const billboardContext = useContext(BillboardContext);
   const [dateState, setDateState] = useState<RangeWithKey>({
     startDate: new Date(),
@@ -38,8 +41,10 @@ function FlightManager() {
     ),
     key: "selection",
   });
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
   const billboards = billboardContext.billboards!;
   const banners = bannerContext.banners!;
+  const saveFlight = flightContext.saveFlight;
   const { register, handleSubmit, control, reset } = useForm<Inputs>();
   const [selectedBanner, setSelectedBanner] = useState<IBanner>();
   const [selectedBillboard, setSelectedBillboard] = useState<IBillboard>();
@@ -52,21 +57,20 @@ function FlightManager() {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    if (dclbillboardCtx.instance) {
-      console.log("Submitting to the contract: ", data.flightDescription);
+    console.log("Submitting to the contract: ", data.flightDescription);
 
-      const saveTx = await dclbillboardCtx.instance.createFlight(
+    if (saveFlight) {
+      await saveFlight(
         data.flightDescription,
-        selectedBanner!.id,
-        selectedBillboard!.id,
-        flightSummary.rate,
-        dateState.startDate!.getTime(),
-        dateState.endDate!.getTime(),
-        flightSummary.totalCost
+        selectedBanner!.id!,
+        selectedBillboard!.id!,
+        BigNumber.from(flightSummary.rate),
+        BigNumber.from(dateState.startDate!.getTime()),
+        BigNumber.from(dateState.endDate!.getTime()),
+        BigNumber.from(flightSummary.totalCost)
       );
-      await saveTx.wait();
-      reset();
     }
+    reset();
   };
 
   useEffect(() => {
@@ -75,6 +79,7 @@ function FlightManager() {
 
   useEffect(() => {
     if (selectedBillboard && selectedBanner && dateState) {
+      setDisabledDates([]);
       const numberOfDays =
         dateMath.diff(dateState.startDate!, dateState.endDate!, "day", false) +
         1;
@@ -96,15 +101,16 @@ function FlightManager() {
 
   const onBannerChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const _banner = banners.find((obj) => {
-      return obj.id.toString() === e.target.value;
+      return obj.id!.toString() === e.target.value;
     });
     setSelectedBanner(_banner);
   };
 
   function onBillboardChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const _billboard = billboards.find((obj) => {
-      return obj.id.toString() === e.target.value;
+      return obj.id!.toString() === e.target.value;
     });
+    setDisabledDates([]);
     setSelectedBillboard(_billboard);
   }
 
@@ -125,12 +131,12 @@ function FlightManager() {
             className="form-control"
             {...register("billboardId", { required: true })}
             onChange={(e) => onBillboardChange(e)}
-            value={selectedBillboard ? selectedBillboard.id.toNumber() : 0}
+            value={selectedBillboard ? selectedBillboard!.id!.toNumber() : 0}
           >
             {billboards.map((billboard) => (
               <option
-                value={billboard.id.toNumber()}
-                key={billboard.id.toNumber()}
+                value={billboard!.id!.toNumber()}
+                key={billboard!.id!.toNumber()}
               >
                 {billboard.description}
               </option>
@@ -142,10 +148,13 @@ function FlightManager() {
             className="form-control"
             {...register("bannerId", { required: true })}
             onChange={(e) => onBannerChange(e)}
-            value={selectedBanner ? selectedBanner.id.toNumber() : 0}
+            value={selectedBanner ? selectedBanner!.id!.toNumber() : 0}
           >
             {banners.map((banner) => (
-              <option value={banner.id.toNumber()} key={banner.id.toNumber()}>
+              <option
+                value={banner!.id!.toNumber()}
+                key={banner!.id!.toNumber()}
+              >
                 {banner.description}
               </option>
             ))}
@@ -170,6 +179,7 @@ function FlightManager() {
                       moveRangeOnFirstSelection={true}
                       ranges={[dateState]}
                       minDate={new Date()}
+                      disabledDates={disabledDates}
                     />
                   )}
                 />

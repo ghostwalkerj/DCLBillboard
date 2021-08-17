@@ -2,25 +2,36 @@
 
 import React, {
   Dispatch,
-  ReactElement,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
 import { IFlight } from "../types";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
+import { BigNumber } from "ethers";
 
 type Props = {
   flightCount: number;
   setFlightCount: Dispatch<SetStateAction<number>>;
   flights: IFlight[];
   setFlights: Dispatch<SetStateAction<IFlight[]>>;
+  approveFlight: (flight: IFlight, approved: boolean) => Promise<void>;
+  saveFlight: (
+    _description: string,
+    _bannerId: BigNumber,
+    _billboardId: BigNumber,
+    _rate: BigNumber,
+    _startDate: BigNumber,
+    _endDate: BigNumber,
+    _total: BigNumber
+  ) => Promise<void>;
 };
 
 const FlightContext = React.createContext<Partial<Props>>({});
 
-function FlightProvider(props: { children: JSX.Element }): ReactElement {
+function FlightProvider(props: { children: JSX.Element }) {
   const dclbillboardCtx = useContext(DCLBillboardContext);
   const [flightCount, setFlightCount] = useState(0);
   const [flights, setFlights] = useState<IFlight[]>([]);
@@ -42,23 +53,77 @@ function FlightProvider(props: { children: JSX.Element }): ReactElement {
     initalizeCount();
   }, [dclbillboardCtx.instance]);
 
+  const getFlights = useCallback(async () => {
+    if (dclbillboardCtx.instance) {
+      const _flights = [];
+      for (let i = flightCount; i >= 1; i--) {
+        const _flight = await dclbillboardCtx.instance.flights(i);
+        _flights.push(_flight);
+      }
+      setFlights(_flights);
+    }
+  }, [dclbillboardCtx.instance, flightCount]);
+
   useEffect(() => {
-    const initializeBillboards = async () => {
+    const initializeFlights = async () => {
       if (dclbillboardCtx.instance) {
-        const _flights = [];
-        for (let i = flightCount; i >= 1; i--) {
-          const banner = await dclbillboardCtx.instance.flights(i);
-          _flights.push(banner);
-        }
-        setFlights(_flights);
+        await getFlights();
       }
     };
-    initializeBillboards();
-  }, [dclbillboardCtx.instance, flightCount]);
+    initializeFlights();
+  }, [dclbillboardCtx.instance, flightCount, getFlights]);
+
+  const approveFlight = async (flight: IFlight, approved: boolean) => {
+    if (dclbillboardCtx.instance && flight) {
+      try {
+        const approveTx = await dclbillboardCtx.instance.approveFlight(
+          flight.id!,
+          approved
+        );
+        await approveTx.wait();
+      } finally {
+        await getFlights();
+      }
+    }
+  };
+
+  const saveFlight = async (
+    _description: string,
+    _bannerId: BigNumber,
+    _billboardId: BigNumber,
+    _rate: BigNumber,
+    _startDate: BigNumber,
+    _endDate: BigNumber,
+    _total: BigNumber
+  ) => {
+    if (dclbillboardCtx.instance) {
+      try {
+        const approveTx = await dclbillboardCtx.instance.createFlight(
+          _description,
+          _bannerId,
+          _billboardId,
+          _rate,
+          _startDate,
+          _endDate,
+          _total
+        );
+        await approveTx.wait();
+        setFlightCount(flightCount + 1);
+      } finally {
+      }
+    }
+  };
 
   return (
     <FlightContext.Provider
-      value={{ flightCount, setFlightCount, flights, setFlights }}
+      value={{
+        flightCount,
+        setFlightCount,
+        flights,
+        setFlights,
+        approveFlight,
+        saveFlight,
+      }}
     >
       {props.children}
     </FlightContext.Provider>
