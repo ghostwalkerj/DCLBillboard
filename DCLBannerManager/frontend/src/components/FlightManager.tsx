@@ -9,6 +9,7 @@ import { FlightContext } from "../context/FlightContext";
 import BillboardView from "./BillboardView";
 import BannerView from "./BannerView";
 import { Col, Container, Row } from "react-bootstrap";
+import { BigNumber } from "ethers";
 
 type Inputs = {
   flightDescription: string;
@@ -42,6 +43,7 @@ function FlightManager() {
   const billboards = billboardContext.billboards!;
   const banners = bannerContext.banners!;
   const createFlight = flightContext.createFlight;
+  const getBlockedDates = flightContext.getBlockedDates;
   const { register, handleSubmit, control, reset, setValue } =
     useForm<Inputs>();
   const [selectedBanner, setSelectedBanner] = useState<IBanner>();
@@ -59,12 +61,12 @@ function FlightManager() {
     if (createFlight) {
       await createFlight(
         data.flightDescription,
-        selectedBanner!.id?.toNumber()!,
-        selectedBillboard!.id!.toNumber()!,
-        flightSummary.rate,
-        dateState.startDate!.getTime(),
-        dateState.endDate!.getTime(),
-        flightSummary.totalCost
+        selectedBanner!.id!,
+        selectedBillboard!.id!,
+        BigNumber.from(flightSummary.rate),
+        BigNumber.from(dateState.startDate!.getTime()),
+        BigNumber.from(dateState.endDate!.getTime()),
+        BigNumber.from(flightSummary.totalCost)
       );
       setValue("flightDescription", "");
       reset();
@@ -77,7 +79,6 @@ function FlightManager() {
 
   useEffect(() => {
     if (selectedBillboard && selectedBanner && dateState) {
-      setDisabledDates([]);
       const numberOfDays =
         dateMath.diff(dateState.startDate!, dateState.endDate!, "day", false) +
         1;
@@ -94,8 +95,13 @@ function FlightManager() {
   }, [selectedBillboard, selectedBanner, dateState]);
 
   useEffect(() => {
-    setSelectedBillboard(billboards[0]);
-  }, [billboards]);
+    const _billboard = billboards[0];
+    setSelectedBillboard(_billboard);
+    if (_billboard && _billboard.id) {
+      const blockedDates = getBlockedDates!(_billboard.id);
+      setDisabledDates(blockedDates);
+    }
+  }, [billboards, getBlockedDates]);
 
   const onBannerChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const _banner = banners.find((obj) => {
@@ -108,8 +114,9 @@ function FlightManager() {
     const _billboard = billboards.find((obj) => {
       return obj.id!.toString() === e.target.value;
     });
-    setDisabledDates([]);
     setSelectedBillboard(_billboard);
+    const blockedDates = getBlockedDates!(_billboard!.id!);
+    setDisabledDates(blockedDates);
   }
 
   return (

@@ -8,8 +8,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
 import { IFlight } from "../types";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
+import * as dateMath from "date-arithmetic";
+import { BigNumber } from "ethers";
 
 type Props = {
   flightCount: number;
@@ -19,13 +22,14 @@ type Props = {
   approveFlight: (flight: IFlight, approved: boolean) => Promise<void>;
   createFlight: (
     _description: string,
-    _bannerId: number,
-    _billboardId: number,
-    _rate: number,
-    _startDate: number,
-    _endDate: number,
-    _total: number
+    _bannerId: BigNumber,
+    _billboardId: BigNumber,
+    _rate: BigNumber,
+    _startDate: BigNumber,
+    _endDate: BigNumber,
+    _total: BigNumber
   ) => Promise<void>;
+  getBlockedDates: (billboardId: BigNumber) => Date[];
 };
 
 const FlightContext = React.createContext<Partial<Props>>({});
@@ -88,12 +92,12 @@ function FlightProvider(props: { children: JSX.Element }) {
 
   const createFlight = async (
     _description: string,
-    _bannerId: number,
-    _billboardId: number,
-    _rate: number,
-    _startDate: number,
-    _endDate: number,
-    _total: number
+    _bannerId: BigNumber,
+    _billboardId: BigNumber,
+    _rate: BigNumber,
+    _startDate: BigNumber,
+    _endDate: BigNumber,
+    _total: BigNumber
   ) => {
     if (dclbillboardCtx.instance) {
       try {
@@ -113,6 +117,25 @@ function FlightProvider(props: { children: JSX.Element }) {
     }
   };
 
+  const getBlockedDates = (_billboardId: BigNumber): Date[] => {
+    const blockedDates: Date[] = [];
+    flights.forEach((flight) => {
+      if (flight.billboardId.eq(_billboardId)) {
+        // Add all the blocked dates
+        const startDate = new Date(flight.startDate.toNumber());
+        const endDate = new Date(flight.endDate.toNumber());
+        blockedDates.push(startDate);
+        blockedDates.push(endDate);
+        let nextDate = dateMath.add(startDate, 1, "day");
+        while (nextDate < endDate) {
+          blockedDates.push(nextDate);
+          nextDate = dateMath.add(nextDate, 1, "day");
+        }
+      }
+    });
+    return blockedDates;
+  };
+
   return (
     <FlightContext.Provider
       value={{
@@ -122,6 +145,7 @@ function FlightProvider(props: { children: JSX.Element }) {
         setFlights,
         approveFlight,
         createFlight,
+        getBlockedDates,
       }}
     >
       {props.children}
