@@ -21,9 +21,9 @@ type Inputs = {
 type FlightSummary = {
   billboardDescription: string;
   bannerDescription: string;
-  rate: number;
+  rate: BigNumber;
   numberOfDays: number;
-  totalCost: number;
+  totalCost: BigNumber;
 };
 
 function FlightManager() {
@@ -51,9 +51,9 @@ function FlightManager() {
   const [flightSummary, setFlightSummary] = useState<FlightSummary>({
     billboardDescription: "",
     bannerDescription: "",
-    rate: 0,
+    rate: BigNumber.from(0),
     numberOfDays: 0,
-    totalCost: 0,
+    totalCost: BigNumber.from(0),
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -82,12 +82,12 @@ function FlightManager() {
       const numberOfDays =
         dateMath.diff(dateState.startDate!, dateState.endDate!, "day", false) +
         1;
-      const totalRate = numberOfDays * selectedBillboard.rate.toNumber();
+      const totalRate = selectedBillboard.rate.mul(numberOfDays);
 
       setFlightSummary({
         bannerDescription: selectedBanner.description,
         billboardDescription: selectedBillboard.description,
-        rate: selectedBillboard.rate.toNumber(),
+        rate: selectedBillboard.rate,
         numberOfDays: numberOfDays,
         totalCost: totalRate,
       });
@@ -205,13 +205,14 @@ function FlightManager() {
                         Banner: {flightSummary.bannerDescription}
                       </li>
                       <li className="list-group-item">
-                        Rate: {flightSummary.rate} Wei / Day
+                        Rate: {flightSummary.rate.toString()} Finney / Day
                       </li>
                       <li className="list-group-item">
                         Run Time: {flightSummary.numberOfDays} days
                       </li>
                       <li className="list-group-item">
-                        Total Cost: {flightSummary.totalCost}
+                        Total Cost: {flightSummary.totalCost.toNumber()} Finney{" "}
+                        <br />({flightSummary.totalCost.toNumber() / 1000} Eth)
                       </li>
                     </ul>
                   </div>

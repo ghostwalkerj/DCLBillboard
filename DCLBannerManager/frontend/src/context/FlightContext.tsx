@@ -12,7 +12,7 @@ import React, {
 import { IFlight } from "../types";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import * as dateMath from "date-arithmetic";
-import { BigNumber } from "ethers";
+import { BigNumber, utils } from "ethers";
 
 type Props = {
   flightCount: number;
@@ -101,6 +101,7 @@ function FlightProvider(props: { children: JSX.Element }) {
   ) => {
     if (dclbillboardCtx.instance) {
       try {
+        const _totalWei = utils.parseUnits(_total.toString(), "finney");
         const approveTx = await dclbillboardCtx.instance.createFlight(
           _description,
           _bannerId,
@@ -108,7 +109,8 @@ function FlightProvider(props: { children: JSX.Element }) {
           _rate,
           _startDate,
           _endDate,
-          _total
+          _total,
+          { value: _totalWei }
         );
         await approveTx.wait();
         setFlightCount(flightCount + 1);

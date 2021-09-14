@@ -98,7 +98,7 @@ function FlightApprove(props: FlightProps) {
             <br />
             <br />
             <div className="card-body list-group-item small">
-              Rate: {flight.rate.toNumber()} Wei / Day <br />
+              Rate: {flight.rate.toNumber()} Finney / Day <br />
               Start Date:{startDate.toString()} <br />
               End Date: {endDate.toString()} <br />
               Run Time: {numberOfDays} days Total Cost:{" "}

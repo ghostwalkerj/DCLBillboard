@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { IBillboard } from "../types";
+import { BigNumber } from "ethers";
 
 type ContextProps = {
   billboardCount: number;
@@ -19,7 +20,7 @@ type ContextProps = {
     _description: string,
     _parcel: string,
     _realm: string,
-    _rate: number
+    _rate: BigNumber
   ) => Promise<void>;
 };
 
@@ -65,7 +66,7 @@ function BillboardProvider(props: { children: JSX.Element }) {
     _description: string,
     _parcel: string,
     _realm: string,
-    _rate: number
+    _rate: BigNumber
   ) => {
     if (dclbillboardCtx.instance) {
       console.log("Submitting to the contract: ", _description);

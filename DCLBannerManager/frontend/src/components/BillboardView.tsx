@@ -27,7 +27,7 @@ function BillboardView(props: BillboardProps) {
             <br />
             Realm: {billboard.realm}
             <br />
-            Rate: {billboard.rate.toString()} Wei / Day
+            Rate: {billboard.rate.toString()} Finney / Day
           </li>
         </ul>
       </div>

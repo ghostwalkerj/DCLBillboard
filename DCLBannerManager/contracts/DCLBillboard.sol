@@ -119,7 +119,7 @@ contract DCLBillboard is AccessControl {
 		uint256 _startDate,
 		uint256 _endDate,
 		uint256 _total
-	) public {
+	) payable public {
 		require(bytes(_description).length > 0, "Description required");
 		require(_bannerId > 0, "BannerId required");
 		require(_billboardId > 0, "BillboardId required");

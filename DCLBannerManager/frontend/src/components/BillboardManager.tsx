@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BillboardContext } from "../context/BillboardContext";
 import BillboardView from "./BillboardView";
+import { BigNumber } from "ethers";
 
 type Inputs = {
   billboardDescription: string;
   billboardParcel: string;
   billboardRealm: string;
-  billboardRate: number;
+  billboardRate: BigNumber;
 };
 
 function BillboardManager() {
@@ -64,7 +65,7 @@ function BillboardManager() {
           <input
             required
             type="number"
-            placeholder={"Rate in Wei / Day"}
+            placeholder={"Rate in Finney (1000 = 1 Eth) / Day"}
             {...register("billboardRate", { required: true })}
             className="form-control"
           />
