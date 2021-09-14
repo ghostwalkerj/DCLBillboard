@@ -9,7 +9,6 @@ import { IFlight } from "../types";
 import FlightApprove from "./FlightApprove";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { formatEther } from "ethers/lib/utils";
-import { utils } from "ethers";
 
 type Inputs = {
   flightID: number;
@@ -63,12 +62,12 @@ function AdminManager() {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    dclbillboardCtx.instance?.withdrawFunds();
-    reset();
+    await dclbillboardCtx.instance?.withdrawFunds();
+    setContractBalance("0");
   };
 
   return (
@@ -76,49 +75,17 @@ function AdminManager() {
       <h2>Admin Funds</h2>
       Contract Current Balance: {contractBalance} Eth
       <form className="withdrawForm" onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group mr-sm-2">
-          <br/>
-          <input
-            required
-            type="float"
-            placeholder="Withdrawal Amount in Eth"
-            {...register("withdrawAmount", {
-              required: true,
-              min: 0,
-              max: contractBalance
-            })}
-            className="form-control"
-          />
-          {errors.withdrawAmount && (
-            <span className="text-danger">
-              Enter valid amount up to the contract balance
-            </span>
-          )}
-
-          <br/>
-          <input
-            required
-            placeholder="Withdrawal Address"
-            {...register("withdrawalAddress", {
-              required: true,
-              validate: (value) => utils.isAddress(value)
-            })}
-            className="form-control"
-          />
-          {errors.withdrawalAddress && (
-            <span className="text-danger">Invalid address</span>
-          )}
-        </div>
+        <br />
 
         <button type="submit" className="btn btn-primary btn-block btn-lg">
           Withdraw
         </button>
       </form>
-      <br/>
+      <br />
       <h2>Admin Flights</h2>
       <form className="approvalForm">
         <div className="form-group mr-sm-2">
-          <br/>
+          <br />
           <select
             className="form-control"
             {...register("flightID")}
@@ -134,7 +101,7 @@ function AdminManager() {
               </option>
             ))}
           </select>
-          <br/>
+          <br />
           <FlightApprove
             flight={selectedFlight}
             banners={banners}

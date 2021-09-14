@@ -157,7 +157,7 @@ contract DCLBillboard is AccessControl {
 
 	function withdrawFunds() public payable onlyRole(ADMIN_ROLE) {
 		address payable to = payable(msg.sender);
-		to.transfer(getBalance());
+		to.transfer(address(this).balance);
 	}
 
 	function getBalance() public view returns (uint256) {

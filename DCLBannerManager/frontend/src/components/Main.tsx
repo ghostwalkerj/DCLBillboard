@@ -33,9 +33,12 @@ function Main() {
                   <Tab eventKey="banner" title="Banner Manager">
                     <BannerManager />
                   </Tab>
-                  <Tab eventKey="billboard" title="Billboard Manager">
-                    <BillboardManager />
-                  </Tab>
+                  {isAdmin && (
+                    <Tab eventKey="billboard" title="Billboard Manager">
+                      <BillboardManager />
+                    </Tab>
+                  )}
+
                   <Tab eventKey="flight" title="Flight Manager">
                     <FlightManager />
                   </Tab>
