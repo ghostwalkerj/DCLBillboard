@@ -32,7 +32,6 @@ function RoleProvider(props: { children: JSX.Element }): ReactElement {
       try {
         if (dclbillboardCtx.instance) {
           const _isAdmin = await dclbillboardCtx.instance.isAdmin();
-          console.log("Admin: ", _isAdmin);
           if (_isAdmin) {
             _roles.push(Role.Admin);
           }

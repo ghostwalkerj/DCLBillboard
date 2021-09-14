@@ -119,7 +119,7 @@ contract DCLBillboard is AccessControl {
 		uint256 _startDate,
 		uint256 _endDate,
 		uint256 _total
-	) payable public {
+	) public payable {
 		require(bytes(_description).length > 0, "Description required");
 		require(_bannerId > 0, "BannerId required");
 		require(_billboardId > 0, "BillboardId required");
@@ -153,6 +153,15 @@ contract DCLBillboard is AccessControl {
 		flights[_id].approved = _approved;
 
 		emit FlightApproved(flights[_id]);
+	}
+
+	function withdrawFunds() public payable onlyRole(ADMIN_ROLE) {
+		address payable to = payable(msg.sender);
+		to.transfer(getBalance());
+	}
+
+	function getBalance() public view returns (uint256) {
+		return address(this).balance;
 	}
 
 	function isAdmin() public view returns (bool) {

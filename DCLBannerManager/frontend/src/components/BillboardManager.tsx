@@ -65,12 +65,14 @@ function BillboardManager() {
           <input
             required
             type="number"
-            placeholder={"Rate in Finney (1000 = 1 Eth) / Day"}
-            {...register("billboardRate", { required: true })}
+            placeholder="Rate in Finney (1000 = 1 Eth) / Day"
+            {...register("billboardRate", { required: true, min: 0 })}
             className="form-control"
           />
           {errors.billboardRate && (
-            <span className="text-danger">This should be a number</span>
+            <span className="text-danger">
+              This should be a positive number
+            </span>
           )}
         </div>
         <button type="submit" className="btn btn-primary btn-block btn-lg">
