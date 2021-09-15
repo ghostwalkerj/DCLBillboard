@@ -1,9 +1,11 @@
 DCLBillboardMaster/bin/*
-DCLBannerManager/frontend/node_modules/*
+DCLManager/frontend/node_modules/*
 .DS_Store
 soljson*
-DCLBannerManager/node_modules/.bin/acorn
-DCLBannerManager/artifacts/*
-DCLBannerManager/frontend/src/hardhat/*
+DCLManager/node_modules/.bin/acorn
+DCLManager/artifacts/*
+DCLManager/frontend/src/hardhat/*
 node_modules/*
 *.idea*
+/DCLDelivery/bin/
+!/DCLDelivery/Image Billboard Black/bin/
