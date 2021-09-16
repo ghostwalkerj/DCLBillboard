@@ -11,6 +11,7 @@ type ContextProps = {
   billboards: IBillboard[];
   setBillboards: Dispatch<SetStateAction<IBillboard[]>>;
   createBillboard: (
+    _targetId: string,
     _description: string,
     _parcel: string,
     _realm: string,
@@ -56,7 +57,9 @@ function BillboardProvider(props: { children: JSX.Element }) {
     initializeBillboards();
   }, [dclbillboardCtx.instance, billboardCount]);
 
+  // @ts-ignore
   const createBillboard = async (
+    _targetId: string,
     _description: string,
     _parcel: string,
     _realm: string,
@@ -65,6 +68,7 @@ function BillboardProvider(props: { children: JSX.Element }) {
     if (dclbillboardCtx.instance) {
       console.log("Submitting to the contract: ", _description);
       const saveTx = await dclbillboardCtx.instance.createBillboard(
+        _targetId,
         _description,
         _parcel,
         _realm,

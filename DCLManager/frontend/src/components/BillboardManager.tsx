@@ -5,6 +5,7 @@ import BillboardView from "./BillboardView";
 import { BigNumber } from "ethers";
 
 type Inputs = {
+  billboardTargetId: string,
   billboardDescription: string;
   billboardParcel: string;
   billboardRealm: string;
@@ -23,14 +24,17 @@ function BillboardManager() {
     formState: { errors }
   } = useForm<Inputs>();
 
+  // @ts-ignore
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     if (billboardContext) {
       await createBillboard(
+        data.billboardTargetId,
         data.billboardDescription,
         data.billboardParcel,
         data.billboardRealm,
         data.billboardRate
-      );
+      )
+      ;
       reset();
     }
   };
@@ -40,6 +44,13 @@ function BillboardManager() {
       <h2>Create a Billboard</h2>
       <form className="bannerForm" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group mr-sm-2">
+          <br/>
+          <input
+            required
+            placeholder="Unique TargetID"
+            {...register("billboardTargetId", { required: true })}
+            className="form-control"
+          />
           <br/>
           <input
             required

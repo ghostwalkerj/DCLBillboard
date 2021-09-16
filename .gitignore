@@ -9,3 +9,5 @@ node_modules/*
 *.idea*
 /DCLDelivery/bin/
 !/DCLDelivery/Image Billboard Black/bin/
+/DCLManager/cache/
+!/DCLManager/artifacts/

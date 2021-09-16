@@ -31,6 +31,7 @@ contract DCLBillboard is AccessControl {
 
     struct Billboard {
         uint256 id;
+        string targetId;
         string description;
         string parcel;
         string realm;
@@ -57,7 +58,7 @@ contract DCLBillboard is AccessControl {
     }
 
     event FlightCreated(Flight _flight);
-    event FlightApproved(Flight _flight);
+    event FlightApproved(Flight _flight, Billboard _billboard, Banner _banner, bool _approved, string indexed _targetId);
 
     constructor() {
         _setupRole(ADMIN_ROLE, msg.sender);
@@ -86,11 +87,13 @@ contract DCLBillboard is AccessControl {
     }
 
     function createBillboard(
+        string memory _targetId,
         string memory _description,
         string memory _parcel,
         string memory _realm,
         uint256 _rate
     ) public {
+        require(bytes(_targetId).length > 0, "TargetId required");
         require(bytes(_description).length > 0, "Description required");
         require(bytes(_parcel).length > 0, "Parcel required");
         require(bytes(_realm).length > 0, "Realm required");
@@ -100,6 +103,7 @@ contract DCLBillboard is AccessControl {
 
         Billboard memory billBoard = Billboard(
             billboardCount,
+            _targetId,
             _description,
             _parcel,
             _realm,
@@ -150,7 +154,10 @@ contract DCLBillboard is AccessControl {
     onlyRole(ADMIN_ROLE)
     {
         flights[_id].approved = _approved;
-        emit FlightApproved(flights[_id]);
+        Flight memory flight = flights[_id];
+        Billboard memory billboard = billboards[flight.billboardId];
+        Banner memory banner = banners[flight.bannerId];
+        emit FlightApproved(flight, billboard, banner, _approved, billboard.targetId);
     }
 
     function withdrawFunds() public payable onlyRole(ADMIN_ROLE) {

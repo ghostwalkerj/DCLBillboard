@@ -27,7 +27,7 @@ function BannerView(props: BannerProps) {
           <li className="list-group-item">
             <p className="text-center">
               <img
-                src={`https://${IPFS_HOST}:${IPFS_PORT}/ipfs/${banner.hash}`}
+                src={`https://${IPFS_HOST}:/ipfs/${banner.hash}`}
                 style={{ maxWidth: "420px" }}
                 alt={"Banner"}
               />

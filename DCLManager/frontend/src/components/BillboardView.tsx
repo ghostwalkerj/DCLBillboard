@@ -18,11 +18,17 @@ function BillboardView(props: BillboardProps) {
           >
             <Jazzicon address={billboard.owner} className="mr-2"/>
           </div>
+
           <small className="text-muted">{billboard.owner}</small>
         </div>
         <ul id="billboardList" className="list-group list-group-flush">
-          <li className="list-group-item">{billboard.description}</li>
+
+          <li className="list-group-item">Id: {billboard!.id!.toString()}</li>
           <li className="list-group-item">
+            TargetId: {billboard.targetId}
+            <br/>
+            {billboard.description}
+            <br/>
             Parcel: {billboard.parcel}
             <br/>
             Realm: {billboard.realm}
@@ -31,7 +37,8 @@ function BillboardView(props: BillboardProps) {
           </li>
         </ul>
       </div>
-    );
+    )
+      ;
   }
   return <div/>;
 }

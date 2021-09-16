@@ -11,10 +11,15 @@
     "ecs:install-next": "npm install --save-dev decentraland-ecs@next"
   },
   "devDependencies": {
+    "@types/node": "^16.9.1",
     "decentraland-ecs": "latest"
   },
   "dependencies": {
+    "decentraland-builder-scripts": "latest",
     "decentraland-ecs": "latest",
-    "decentraland-builder-scripts": "latest"
-  }
+    "eth-connect": "^6.0.2"
+  },
+  "bundleDependencies": [
+    "eth-connect"
+  ]
 }

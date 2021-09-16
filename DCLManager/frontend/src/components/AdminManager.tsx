@@ -9,6 +9,7 @@ import { IFlight } from "../types";
 import FlightApprove from "./FlightApprove";
 import { DCLBillboardContext } from "../hardhat/SymfoniContext";
 import { formatEther } from "ethers/lib/utils";
+import EventView from "./EventView";
 
 type Inputs = {
   flightID: number;
@@ -103,6 +104,9 @@ function AdminManager() {
             billboards={billboards}
             approveFlight={approveFlight}
           />
+          <br/>
+          <EventView/>
+
         </div>
       </form>
     </div>

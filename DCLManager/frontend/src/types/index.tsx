@@ -2,6 +2,7 @@ import { BigNumber } from "ethers";
 
 export type IBillboard = {
   id?: BigNumber;
+  targetId: string;
   description: string;
   parcel: string;
   realm: string;
