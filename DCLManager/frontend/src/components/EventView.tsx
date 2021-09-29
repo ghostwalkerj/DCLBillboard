@@ -10,7 +10,7 @@ function EventView() {
   //   console.log("Approved! ", approved);
   // });
 
-  const eventFilter = instance.filters.FlightApproved(null, null, null, null, "boogie1");
+  const eventFilter = instance.filters.FlightApproved("boogie1", null, null);
   const getFlights = async () => {
     const events = await instance.queryFilter(eventFilter);
     events.forEach(e => {

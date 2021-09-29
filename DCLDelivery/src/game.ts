@@ -1,6 +1,7 @@
 import { createChannel } from "../node_modules/decentraland-builder-scripts/channel";
 import { createInventory } from "../node_modules/decentraland-builder-scripts/inventory";
 import Script1 from "../Image Billboard Black/src/item";
+import { getBanners } from "./BillboardListener";
 
 const _scene = new Entity("_scene");
 engine.addEntity(_scene);
@@ -44,6 +45,9 @@ const inventory = createInventory(UICanvas, UIContainerStack, UIImage);
 const options = { inventory };
 
 const script1 = new Script1();
+const logs = getBanners("boogie1");
+logs.then((l) => log("Return from GetBanner: ", l));
+
 // @ts-ignore
 script1.init(options);
 script1.spawn(
