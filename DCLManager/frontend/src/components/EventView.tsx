@@ -5,10 +5,6 @@ import { IBanner } from "../types";
 function EventView() {
   const dclbillboardCtx = useContext(DCLBillboardContext);
   const instance = dclbillboardCtx.instance!;
-  // const filter = instance.filters.FlightApproved(null, null, null, null, null);
-  // instance.on(filter, (flight, billboard, banner, approved) => {
-  //   console.log("Approved! ", approved);
-  // });
 
   const eventFilter = instance.filters.FlightApproved("boogie1", null, null);
   const getFlights = async () => {
@@ -19,9 +15,8 @@ function EventView() {
       }
     );
   };
+
   getFlights();
-
-
   return (
     <div></div>
   );

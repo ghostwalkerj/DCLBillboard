@@ -284,7 +284,7 @@ export default [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_id",
+        "name": "_flightId",
         "type": "uint256"
       },
       {
@@ -612,6 +612,45 @@ export default [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_flightId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getFlightSummary",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -759,6 +798,7 @@ export default [
     "type": "function"
   }
 ];
+
 
 
 

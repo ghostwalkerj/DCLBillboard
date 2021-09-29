@@ -3,6 +3,7 @@ import { createInventory } from "../node_modules/decentraland-builder-scripts/in
 import Script1 from "../Image Billboard Black/src/item";
 import { getBanners } from "./BillboardListener";
 
+const INFURA_URL = "https://ipfs.infura.io/ipfs/";
 const _scene = new Entity("_scene");
 engine.addEntity(_scene);
 const transform = new Transform({
@@ -45,16 +46,28 @@ const inventory = createInventory(UICanvas, UIContainerStack, UIImage);
 const options = { inventory };
 
 const script1 = new Script1();
-const logs = getBanners("boogie1");
-logs.then((l) => log("Return from GetBanner: ", l));
 
+// get current banner
+let bannerImage = "";
+const flightSummary = getBanners("boogie1");
+flightSummary.then((fs) => {
 // @ts-ignore
-script1.init(options);
-script1.spawn(
-  imageBillboardBlack,
-  {
-    image:
-      "https://ipfs.infura.io/ipfs/QmSgUvUipiy9TnJ9nWgDDcTxXpUxpC3hAAdGYCzn5uRjiq"
-  },
-  createChannel(channelId, imageBillboardBlack, channelBus)
-);
+  const nowDate = Date.now();
+  fs.forEach(row => {
+    if (row.startDate <= nowDate && row.endDate >= nowDate) {
+      bannerImage = row.hash;
+    }
+  });
+  // @ts-ignore
+  script1.init(options);
+  script1.spawn(
+    imageBillboardBlack,
+    {
+      image:
+        INFURA_URL + bannerImage
+    },
+    createChannel(channelId, imageBillboardBlack, channelBus)
+  );
+});
+
+
