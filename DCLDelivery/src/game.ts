@@ -4,8 +4,6 @@ import Script1 from "../Image Billboard Black/src/item";
 import { getBanners } from "./BillboardListener";
 import * as config from "./config";
 
-const TARGET_ID = "boogie2";
-
 const _scene = new Entity("_scene");
 engine.addEntity(_scene);
 const transform = new Transform({
@@ -51,25 +49,27 @@ const script1 = new Script1();
 
 // get current banner
 let bannerImage = "";
+const TARGET_ID = "dclbanner1";
 const flightSummary = getBanners(TARGET_ID);
 flightSummary.then((fs) => {
 // @ts-ignore
-  const nowDate = Date.now();
-  fs.forEach(row => {
-    if (row.startDate <= nowDate && row.endDate >= nowDate) {
-      bannerImage = row.hash;
-    }
-  });
-  // @ts-ignore
-  script1.init(options);
-  script1.spawn(
-    imageBillboardBlack,
-    {
-      image:
-        config.INFURA_URL + bannerImage
-    },
-    createChannel(channelId, imageBillboardBlack, channelBus)
-  );
-});
+    const nowDate = Date.now();
+    fs.forEach(row => {
+      if (row.startDate <= nowDate && row.endDate >= nowDate) {
+        bannerImage = row.hash;
+      }
+    });
+    // @ts-ignore
+    script1.init(options);
+    script1.spawn(
+      imageBillboardBlack,
+      {
+        image:
+          config.INFURA_URL + bannerImage
+      },
+      createChannel(channelId, imageBillboardBlack, channelBus)
+    );
+  }
+);
 
 

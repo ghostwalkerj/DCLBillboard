@@ -130,17 +130,65 @@ required by DCL to run billboards. These parameters are:
   for the delivery system to start. Recommend it is the block after the DCLBillboard deployment. Example: "
   0xb91deb892a285d833b21af137c70228fd6f2d91116a39159d5e124701fee7f71"
 
-### Billboard Listener
+### BillboardListener.ts
+
+The BillboardListener.ts module contains the methods required to get banners from the DCLBillboard Contract. The only
+call required is `getBanners(targetId: string)`. Where the targetId is the unique indentifier for the billboard.
+BillboardListener.ts uses Config.ts to establish the connection with the Ethereum blockchain and uses the DCL libraries
+for all calls.
+
+### Smart Item code
+
+The following snippet shows how to integrate the banner code into a DCL Smart Item:
+
+```typescript
+// get current banner
+let bannerImage = "";
+const TARGET_ID = "dclbanner1";
+const flightSummary = getBanners(TARGET_ID);
+flightSummary.then((fs) => {
+// @ts-ignore
+  const nowDate = Date.now();
+  fs.forEach(row => {
+    if (row.startDate <= nowDate && row.endDate >= nowDate) {
+      bannerImage = row.hash;
+    }
+  });
+  // @ts-ignore
+  script1.init(options);
+  script1.spawn(
+    imageBillboardBlack,
+    {
+      image:
+        config.INFURA_URL + bannerImage
+    },
+    createChannel(channelId, imageBillboardBlack, channelBus)
+  );
+}
+```
 
 ## Future Enhancements
 
 ### Click-thru
 
+The system has hooks already built for users to interact with banners using a click-thru url. However no functionality
+is implemented.
+
 ### Banner Size Restriction
+
+Currently, any banner can be uploaded into the system. This includes very large images and images that have aspect
+ratios not suitable to the billboard. Implementing a precheck before saving a banner for the suitability of a banner is
+a easy feature to implement.
 
 ### Un-approving Flights
 
-Refunds
+The approval system has two possible enhancements:
+
+* If a flight is not approved, or it is unapproved, then create a refund to the user. Currently, this must be handled
+  maually.
+* Unapproved flights still block out the calendar for other banners. Instead, flights could have three states, waiting
+  approval (which blocks the calendar), approved (which blocks the calendar and keeps the funds) and unapproved (which
+  unblocks the calendar and issues a refund).
 
 ### Expanding Smart Items
 
