@@ -83,7 +83,7 @@ banner is copied to the IPFS.
 
 #### Billboard Manager (Administrator Only)
 
-Administrators can create any number of billboards. Each billboard should have a unqiue TargetId that will match with
+Administrators can create any number of billboards. Each billboard should have a unique TargetId that will match with
 the DCL Smart Item. Description, Parcel and Realm are fields used purely for front end administration and have no other
 impact on the system. The rate field is used to calculate the total cost when this billboard is selected for a flight.
 
@@ -94,9 +94,9 @@ impact on the system. The rate field is used to calculate the total cost when th
 #### Flight Manager
 
 Flight Manager joins an existing banner with an existing billboard over a period of time in whole days. Anyone can
-register a fliight. This is the money maker! When scheduled, users must pay for the entire run of the flight in Eth.
-This is calculated by the billboard rate * the number of days of the flight. Dates that are already booked for the
-billboard are blocked out and not available for selection.
+register a flight. This is the money maker! When scheduled, users must pay for the entire run of the flight in Eth. This
+is calculated by the billboard rate * the number of days of the flight. Dates that are already booked for the billboard
+are blocked out and not available for selection.
 
 ![screenshot_106.png](./assets/screenshot_106.png)
 
@@ -112,9 +112,23 @@ unapproved, however refunds are not automatic. See [Un-approving Flights](#un-ap
 
 ### DCL Delivery System
 
-∂
+The DCL Delivery System is built around the DCL API and has no dependencies on the DCLBillboard Management System, other
+than having the DCLBillboard smart contract deployed. Any smart item using the Delivery System will listen to the
+contract for an Approved Flight event that match the item's targetID. If an event happens for that billboard for the
+given dates, then the billboard will display the corresponding banner.
 
 ### Config.ts
+
+Within the source files for the DCL Delivery System is the config.ts file which contains the configuration information
+required by DCL to run billboards. These parameters are:
+
+- **INFURA_URL** : should be "https://ipfs.infura.io/ipfs/"
+- **PROVIDER** : Url for node provider, example: "http://127.0.0.1:8545"
+- **CONTRACT_ADDRESS** : Must contain the correct address for the DCLBillboard Contract after it is deployed, example: "
+  0xabfe99d4cf78e5e2823bccf02a6687face5d99cb"
+- **STARTBLOCK** = the begging block to look for ApprovedFlight events. The earlier the block, the longer it will take
+  for the delivery system to start. Recommend it is the block after the DCLBillboard deployment. Example: "
+  0xb91deb892a285d833b21af137c70228fd6f2d91116a39159d5e124701fee7f71"
 
 ### Billboard Listener
 
