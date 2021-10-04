@@ -47,7 +47,7 @@ function BillboardManager() {
           <br/>
           <input
             required
-            placeholder="Unique TargetID"
+            placeholder="Unique TargetId"
             {...register("billboardTargetId", { required: true })}
             className="form-control"
           />

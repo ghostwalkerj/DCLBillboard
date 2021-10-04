@@ -2,8 +2,10 @@ import { createChannel } from "../node_modules/decentraland-builder-scripts/chan
 import { createInventory } from "../node_modules/decentraland-builder-scripts/inventory";
 import Script1 from "../Image Billboard Black/src/item";
 import { getBanners } from "./BillboardListener";
+import * as config from "./config";
 
-const INFURA_URL = "https://ipfs.infura.io/ipfs/";
+const TARGET_ID = "boogie2";
+
 const _scene = new Entity("_scene");
 engine.addEntity(_scene);
 const transform = new Transform({
@@ -49,7 +51,7 @@ const script1 = new Script1();
 
 // get current banner
 let bannerImage = "";
-const flightSummary = getBanners("boogie1");
+const flightSummary = getBanners(TARGET_ID);
 flightSummary.then((fs) => {
 // @ts-ignore
   const nowDate = Date.now();
@@ -64,7 +66,7 @@ flightSummary.then((fs) => {
     imageBillboardBlack,
     {
       image:
-        INFURA_URL + bannerImage
+        config.INFURA_URL + bannerImage
     },
     createChannel(channelId, imageBillboardBlack, channelBus)
   );
