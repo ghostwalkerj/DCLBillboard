@@ -192,4 +192,12 @@ The approval system has two possible enhancements:
 
 ### Expanding Smart Items
 
+In the future, instead of having to put the getBanner code into the Smart Item and declaring the targetId in code, the
+targetID could be an attribute which is exposed in the Decentraland Builder. Then users will not need any code to deploy
+billboards only unique ids.
+
 ### Listening to New Flights
+
+When billboards are deployed, the getBanner method searches for all previously approved flights. In order to schedule
+more flights, the item must be redeployed. An enhancement would create an event listener which would response to newly
+approved flights and keep them in memory to rotate when the correct date arrives.
