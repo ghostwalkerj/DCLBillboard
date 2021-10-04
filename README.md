@@ -108,6 +108,8 @@ Currently, the Admin screen has two purposes. To withdraw funds from the DCLBill
 wallet and to approve flights. Only approved flights will show up on the billboard asset in DCL. Flights can also be
 unapproved, however refunds are not automatic. See [Un-aproving FLights](#unapprove).
 
+![screenshot_108.png](./assets/screenshot_108.png)
+
 ### DCL Delivery System
 
 ### Config.ts
