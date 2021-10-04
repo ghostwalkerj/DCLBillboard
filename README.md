@@ -106,11 +106,13 @@ billboard are blocked out and not available for selection.
 
 Currently, the Admin screen has two purposes. To withdraw funds from the DCLBillboard contract into the administrators
 wallet and to approve flights. Only approved flights will show up on the billboard asset in DCL. Flights can also be
-unapproved, however refunds are not automatic. See [Un-approving Flights](###un-approving-flights).
+unapproved, however refunds are not automatic. See [Un-approving Flights](#un-approving-flights).
 
 ![screenshot_108.png](./assets/screenshot_108.png)
 
 ### DCL Delivery System
+
+∂
 
 ### Config.ts
 
