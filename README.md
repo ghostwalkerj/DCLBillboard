@@ -43,6 +43,8 @@ The DCLBillboard contract holds the information for the system. This includes:
   administrator addresses may be added and removed. See the
   OpenZeppelin [documentation](https://docs.openzeppelin.com/contracts/2.x/access-control) for more information on
   Ownership and Role-Based Access Control.
+* Banners, Billboards, and Flight objects
+* Payments from users who have schedule Flights.
 
 ### DCLBillboard Management System
 
@@ -114,7 +116,7 @@ unapproved, however refunds are not automatic. See [Un-approving Flights](#un-ap
 
 The DCL Delivery System is built around the DCL API and has no dependencies on the DCLBillboard Management System, other
 than having the DCLBillboard smart contract deployed. Any smart item using the Delivery System will listen to the
-contract for an Approved Flight event that match the item's targetID. If an event happens for that billboard for the
+contract for an Approved Flight event that matches the item's targetID. If an event happens for that billboard for the
 given dates, then the billboard will display the corresponding banner.
 
 ### Config.ts
@@ -133,7 +135,7 @@ required by DCL to run billboards. These parameters are:
 ### BillboardListener.ts
 
 The BillboardListener.ts module contains the methods required to get banners from the DCLBillboard Contract. The only
-call required is `getBanners(targetId: string)`. Where the targetId is the unique indentifier for the billboard.
+call required is `getBanners(targetId: string)`. Where the targetId is the unique identifier for the billboard.
 BillboardListener.ts uses Config.ts to establish the connection with the Ethereum blockchain and uses the DCL libraries
 for all calls.
 
@@ -167,6 +169,10 @@ flightSummary.then((fs) => {
 }
 ```
 
+Results:
+
+![screenshot_109.png](./assets/screenshot_109.png)
+
 ## Future Enhancements
 
 ### Click-thru
@@ -185,7 +191,7 @@ a easy feature to implement.
 The approval system has two possible enhancements:
 
 * If a flight is not approved, or it is unapproved, then create a refund to the user. Currently, this must be handled
-  maually.
+  manually.
 * Unapproved flights still block out the calendar for other banners. Instead, flights could have three states, waiting
   approval (which blocks the calendar), approved (which blocks the calendar and keeps the funds) and unapproved (which
   unblocks the calendar and issues a refund).

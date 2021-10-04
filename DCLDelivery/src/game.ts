@@ -49,7 +49,7 @@ const script1 = new Script1();
 
 // get current banner
 let bannerImage = "";
-const TARGET_ID = "dclbanner1";
+const TARGET_ID = "DCL1";
 const flightSummary = getBanners(TARGET_ID);
 flightSummary.then((fs) => {
 // @ts-ignore

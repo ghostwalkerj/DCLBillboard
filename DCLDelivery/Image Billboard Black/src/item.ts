@@ -32,7 +32,7 @@ export default class SignPost implements IScript<Props> {
       new Transform({
         position: new Vector3(0, 3.852, 0.21),
         rotation: Quaternion.Euler(180, 0, 0),
-        scale: new Vector3(2.3, 2.3, 2.3)
+        scale: new Vector3(5.3, 2.3, 2.3)
       })
     );
     let QRPlane2 = new Entity();
@@ -43,7 +43,7 @@ export default class SignPost implements IScript<Props> {
       new Transform({
         position: new Vector3(0, 3.852, -0.21),
         rotation: Quaternion.Euler(180, 180, 0),
-        scale: new Vector3(2.3, 2.3, 2.3)
+        scale: new Vector3(5.3, 2.3, 2.3)
       })
     );
   }
