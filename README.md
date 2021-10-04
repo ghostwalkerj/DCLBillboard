@@ -73,9 +73,34 @@ With Non-Admin Address:
 
 #### Banner Manager
 
-#### Billboard Manager
+The Banner Manager is open to the public. Any user can upload a banner to the system. Each banner must be a valid image
+file and have a description. User will pay a small Eth fee to upload the banner to the contract. Once successful, the
+banner is copied to the IPFS.
+
+![screenshot_102.png](./assets/1633317612888-screenshot_102.png)
+
+![screenshot_103.png](./assets/screenshot_103.png)
+
+#### Billboard Manager (Administrator Only)
+
+Administrators can create any number of billboards. Each billboard should have a unqiue TargetId that will match with
+the DCL Smart Item. Description, Parcel and Realm are fields used purely for front end administration and have no other
+impact on the system. The rate field is used to calculate the total cost when this billboard is selected for a flight.
+
+![screenshot_104.png](./assets/screenshot_104.png)
+
+![screenshot_105.png](./assets/screenshot_105.png)
 
 #### Flight Manager
+
+Flight Manager joins an existing banner with an existing billboard over a period of time in whole days. Anyone can
+register a fliight. This is the money maker! When scheduled, users must pay for the entire run of the flight in Eth.
+This is calculated by the billboard rate * the number of days of the flight. Dates that are already booked for the
+billboard are blocked out and not available for selection.
+
+![screenshot_106.png](./assets/screenshot_106.png)
+
+![screenshot_107.png](./assets/screenshot_107.png)
 
 #### Admin
 
